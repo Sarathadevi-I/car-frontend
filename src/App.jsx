@@ -1,16 +1,16 @@
 import './index.css'
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Homepage from './Components/Pages/Homepage';
-import VehicleGroupSelect from "./Components/Pages/VehicleGroupSelect";
+import VehicleGroupSelect from "./Components/Pages/Vehiclegroupselect";
 import AboutUs from "./Components/Pages/AboutUs";
 import Navbar from './Components/Pages/Navbar';
 import Footer from './Components/Pages/Footer';
-import HowItWorks from './Components/Pages/Howitworks';
-import ContactUs from './Components/Pages/ContactUs'; // ✅ add this
+import HowItWorks from './Components/Pages/HowItWorks';
+import ContactUs from './Components/Pages/Contactus'; // ✅ add this
 
 
 import AdminLogin from './Components/Pages/AdminLogin';
-import AdminDashboard from './Components/Pages/AdminDashboard';
+import AdminDashboard from './Components/Pages/Admindashboard';
 
 
 
