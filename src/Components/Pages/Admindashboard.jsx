@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import * as XLSX from "xlsx";
+
 const API = `${import.meta.env.VITE_API_URL}/api/admin`;
 
 const STATUS_COLORS = {
@@ -9,12 +11,20 @@ const STATUS_COLORS = {
   cancelled: { bg: "#FEE2E2", color: "#991B1B" },
 };
 
+const formatDate = (d) => {
+  if (!d) return "—";
+  const date = new Date(d);
+  return date.toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" });
+};
+
 export default function AdminDashboard() {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all");
-  const [editModal, setEditModal] = useState(null); // booking being edited
+  const [editModal, setEditModal] = useState(null);
   const [deleteId, setDeleteId] = useState(null);
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
   const navigate = useNavigate();
 
   const token = sessionStorage.getItem("adminToken");
@@ -66,12 +76,50 @@ export default function AdminDashboard() {
     navigate("/admin/login");
   };
 
-  const filtered = filter === "all" ? bookings : bookings.filter(b => b.source === filter);
+  // ── Filter by source + date range ──
+  const filtered = bookings.filter(b => {
+    if (filter !== "all" && b.source !== filter) return false;
+
+    if (fromDate || toDate) {
+      if (!b.createdAt) return false;
+      const created = new Date(b.createdAt);
+      if (fromDate && created < new Date(fromDate + "T00:00:00")) return false;
+      if (toDate && created > new Date(toDate + "T23:59:59")) return false;
+    }
+    return true;
+  });
 
   const counts = {
     all: bookings.length,
     home: bookings.filter(b => b.source === "home").length,
     contact: bookings.filter(b => b.source === "contact").length,
+  };
+
+  const clearDateFilter = () => { setFromDate(""); setToDate(""); };
+
+  // ── Excel export ──
+  const downloadExcel = () => {
+    const rows = filtered.map((b, i) => ({
+      "#": i + 1,
+      "Name": b.name || "—",
+      "Phone": b.phone || "—",
+      "Car Type": b.carType || "—",
+      "Service": b.serviceType || "—",
+      "Pickup": b.pickupLocation || "—",
+      "Drop": b.dropLocation || "—",
+      "Rental Date": b.rentalDate || "—",
+      "Return Date": b.returnDate || "—",
+      "Source": b.source,
+      "Status": b.status,
+      "Applied On": formatDate(b.createdAt),
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(rows);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Bookings");
+
+    const fileName = `DACars_Bookings_${new Date().toISOString().slice(0, 10)}.xlsx`;
+    XLSX.writeFile(wb, fileName);
   };
 
   return (
@@ -114,8 +162,8 @@ export default function AdminDashboard() {
           ))}
         </div>
 
-        {/* ── Filter tabs + Refresh ── */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+        {/* ── Filter tabs + Date range + Refresh + Excel ── */}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12, flexWrap: "wrap", gap: 12 }}>
           <div style={{ display: "flex", gap: 8 }}>
             {[["all", "All"], ["home", "Homepage"], ["contact", "Contact Us"]].map(([val, label]) => (
               <button key={val} onClick={() => setFilter(val)} style={{
@@ -127,9 +175,30 @@ export default function AdminDashboard() {
               </button>
             ))}
           </div>
-          <button onClick={fetchBookings} style={{ padding: "7px 16px", borderRadius: 20, border: "1.5px solid #E2E8F0", background: "#fff", fontSize: 13, fontWeight: 600, color: "#0C2340", cursor: "pointer" }}>
-            ↻ Refresh
-          </button>
+
+          <div style={{ display: "flex", gap: 8 }}>
+            <button onClick={fetchBookings} style={{ padding: "7px 16px", borderRadius: 20, border: "1.5px solid #E2E8F0", background: "#fff", fontSize: 13, fontWeight: 600, color: "#0C2340", cursor: "pointer" }}>
+              ↻ Refresh
+            </button>
+            <button onClick={downloadExcel} style={{ padding: "7px 16px", borderRadius: 20, border: "none", background: "#10B981", fontSize: 13, fontWeight: 600, color: "#fff", cursor: "pointer" }}>
+              ⬇ Excel
+            </button>
+          </div>
+        </div>
+
+        {/* ── Date range filter ── */}
+        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16, background: "#fff", padding: "12px 16px", borderRadius: 12, boxShadow: "0 1px 4px rgba(0,0,0,0.06)" }}>
+          <span style={{ fontSize: 12, fontWeight: 600, color: "#64748B" }}>Applied on:</span>
+          <input type="date" value={fromDate} onChange={e => setFromDate(e.target.value)}
+            style={{ padding: "6px 10px", borderRadius: 8, border: "1.5px solid #E2E8F0", fontSize: 13, outline: "none" }} />
+          <span style={{ fontSize: 12, color: "#94A3B8" }}>to</span>
+          <input type="date" value={toDate} onChange={e => setToDate(e.target.value)}
+            style={{ padding: "6px 10px", borderRadius: 8, border: "1.5px solid #E2E8F0", fontSize: 13, outline: "none" }} />
+          {(fromDate || toDate) && (
+            <button onClick={clearDateFilter} style={{ padding: "6px 12px", borderRadius: 8, border: "none", background: "#FEE2E2", color: "#EF4444", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>
+              Clear
+            </button>
+          )}
         </div>
 
         {/* ── Table ── */}
@@ -151,6 +220,7 @@ export default function AdminDashboard() {
                   <th>Drop</th>
                   <th>Rental Date</th>
                   <th>Return Date</th>
+                  <th>Applied On</th>
                   <th>Source</th>
                   <th>Status</th>
                   <th>Actions</th>
@@ -168,6 +238,7 @@ export default function AdminDashboard() {
                     <td>{b.dropLocation || "—"}</td>
                     <td>{b.rentalDate || "—"}</td>
                     <td>{b.returnDate || "—"}</td>
+                    <td style={{ whiteSpace: "nowrap", color: "#64748B" }}>{formatDate(b.createdAt)}</td>
                     <td>
                       <span style={{ fontSize: 11, fontWeight: 600, padding: "3px 10px", borderRadius: 20,
                         background: b.source === "home" ? "#EEF4FF" : "#FFF7ED",
@@ -215,7 +286,6 @@ export default function AdminDashboard() {
                 />
               </div>
             ))}
-            {/* Status */}
             <div style={{ marginBottom: 20 }}>
               <label style={{ fontSize: 11, fontWeight: 600, color: "#64748B", display: "block", marginBottom: 4 }}>Status</label>
               <select value={editModal.status} onChange={e => setEditModal(p => ({ ...p, status: e.target.value }))}
