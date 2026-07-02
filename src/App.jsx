@@ -1,5 +1,5 @@
 import './index.css'
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import Homepage from './Components/Pages/Homepage';
 import AboutUs from "./Components/Pages/AboutUs";
 import Navbar from './Components/Pages/Navbar';
@@ -10,10 +10,13 @@ import AdminLogin from './Components/Pages/AdminLogin';
 import AdminDashboard from './Components/Pages/Admindashboard';
 import VehicleGroupSelect from './Components/Pages/Vehiclegroupselect';
 
-function App() {
+function Layout() {
+  const location = useLocation();
+  const hideNavFooter = location.pathname === "/admin/dashboard";
+
   return (
-    <BrowserRouter>
-      <Navbar />
+    <>
+      {!hideNavFooter && <Navbar />}
       <Routes>
         <Route path="/"             element={<Homepage />} />
         <Route path="/home"         element={<Homepage />} />
@@ -24,7 +27,15 @@ function App() {
         <Route path="/admin/login"     element={<AdminLogin />} />
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
       </Routes>
-      <Footer />
+      {!hideNavFooter && <Footer />}
+    </>
+  );
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <Layout />
     </BrowserRouter>
   );
 }

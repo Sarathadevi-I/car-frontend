@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import Logo from "../../assets/logo.png"
+import { Eye, EyeOff } from "lucide-react";
 export default function AdminLogin() {
   const [form, setForm] = useState({ username: "", password: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async () => {
@@ -97,21 +99,36 @@ export default function AdminLogin() {
         </div>
 
         {/* Password */}
-        <div style={{ marginBottom: 20 }}>
-          <label style={{ fontSize: 12, fontWeight: 600, color: "#64748B", display: "block", marginBottom: 6 }}>Password</label>
-          <input
-            type="password"
-            placeholder="Enter password"
-            value={form.password}
-            onChange={e => setForm(p => ({ ...p, password: e.target.value }))}
-            onKeyDown={e => e.key === "Enter" && handleSubmit()}
-            style={{
-              width: "100%", padding: "10px 14px", borderRadius: 10,
-              border: "1.5px solid #E2E8F0", fontSize: 14, color: "#0C2340",
-              outline: "none", boxSizing: "border-box",
-            }}
-          />
-        </div>
+       {/* Password */}
+<div style={{ marginBottom: 20 }}>
+  <label style={{ fontSize: 12, fontWeight: 600, color: "#64748B", display: "block", marginBottom: 6 }}>Password</label>
+  <div style={{ position: "relative" }}>
+    <input
+      type={showPassword ? "text" : "password"}
+      placeholder="Enter password"
+      value={form.password}
+      onChange={e => setForm(p => ({ ...p, password: e.target.value }))}
+      onKeyDown={e => e.key === "Enter" && handleSubmit()}
+      style={{
+        width: "100%", padding: "10px 40px 10px 14px", borderRadius: 10,
+        border: "1.5px solid #E2E8F0", fontSize: 14, color: "#0C2340",
+        outline: "none", boxSizing: "border-box",
+      }}
+    />
+ <button
+  type="button"
+  onClick={() => setShowPassword(p => !p)}
+  style={{
+    position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)",
+    background: "none", border: "none", cursor: "pointer", padding: 4,
+    display: "flex", alignItems: "center", color: "#94A3B8",
+  }}
+  aria-label={showPassword ? "Hide password" : "Show password"}
+>
+  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+</button>
+  </div>
+</div>
 
         {/* Error */}
         {error && (

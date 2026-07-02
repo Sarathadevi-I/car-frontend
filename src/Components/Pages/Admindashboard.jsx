@@ -70,11 +70,10 @@ export default function AdminDashboard() {
       setEditModal(null);
     } catch { alert("Update failed"); }
   };
-
-  const logout = () => {
-    sessionStorage.removeItem("adminToken");
-    navigate("/admin/login");
-  };
+const logout = () => {
+  sessionStorage.removeItem("adminToken");
+  navigate("/");
+};
 
   // ── Filter by source + date range ──
   const filtered = bookings.filter(b => {
