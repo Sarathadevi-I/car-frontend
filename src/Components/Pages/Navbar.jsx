@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Logo from "../../assets/logo.png"
-
+import { FaPhoneAlt } from "react-icons/fa";
 const NAV_LINKS = [
   { label: "Home",         to: "/" },
   { label: "Vehicles",     to: "/vehicles" },
@@ -101,7 +101,9 @@ function Navbar() {
         <div className="hidden-mobile" style={{ display: "flex", alignItems: "center", gap: 20, flexShrink: 0 }}>
           <a href="tel:+919080202798"
             style={{ display: "flex", alignItems: "center", gap: 8, textDecoration: "none" }}>
-            <div style={{ width: 34, height: 34, borderRadius: "50%", background: "#EEF4FF", display: "flex", alignItems: "center", justifyContent: "center" }}>📞</div>
+<div style={{ width: 34, height: 34, borderRadius: "50%", background: "#EEF4FF", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <FaPhoneAlt size={14} color="#1A6FD4" />
+            </div>
             <div>
               <p style={{ fontSize: 10, color: "#94A3B8", margin: 0 }}>Need help?</p>
               <p style={{ fontSize: 13, color: "#0C2340", margin: 0, fontWeight: 700 }}>+91 90802 02798</p>
@@ -167,7 +169,9 @@ function Navbar() {
             display: "flex", alignItems: "center", gap: 8, textDecoration: "none",
             padding: "12px 8px", marginTop: 6, borderTop: "1px solid #F1F5F9",
           }}>
-            <span style={{ fontSize: 13, color: "#0C2340", fontWeight: 700 }}>📞 +91 90802 02798</span>
+           <span style={{ fontSize: 13, color: "#0C2340", fontWeight: 700, display: "flex", alignItems: "center", gap: 6 }}>
+              <FaPhoneAlt size={13} color="#1A6FD4" /> +91 90802 02798
+            </span>
           </a>
 
           <Link to="/vehicles" onClick={() => setMenuOpen(false)} style={{
