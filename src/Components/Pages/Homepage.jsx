@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+;
 import { Settings2, Fuel, Wind, MapPin, CarFront, Wallet } from "lucide-react";
 import { Link } from "react-router-dom";
 import Brezza from "../../assets/brezza.jpeg"
@@ -102,6 +103,7 @@ function FadeIn({ children, delay = 0, up = true }) {
 }
 
 function Homepage() {
+  
   const [form, setForm] = useState({
     
     carType: "",
@@ -288,9 +290,9 @@ const handleSubmit = async () => {
                     </div>
                   </div>
 
-                  <button onClick={handleSubmit} className="w-full py-3.5 bg-[#FF6B2B] text-white font-bold rounded-xl hover:bg-[#e55f22] transition-colors">
-                    Book now →
-                  </button>
+                <button className="bg-[#FF6B2B] hover:bg-[#e55f22] text-white font-bold px-8 py-4 rounded-full transition-all duration-300">
+                  Book Your Car →
+                </button>
 
                   {/* Inline success/error message instead of alert() */}
                   {message && (
@@ -385,9 +387,12 @@ const handleSubmit = async () => {
                 ))}
               </div>
               <div className="mt-10">
-                <button className="bg-[#FF6B2B] hover:bg-[#e55f22] text-white font-bold px-8 py-4 rounded-full transition-all duration-300">
-                  Book Your Car →
-                </button>
+              <Link
+                  to="/contact"
+                  className="inline-block bg-[#FF6B2B] hover:bg-[#e55f22] text-white font-bold px-8 py-4 rounded-full transition-all duration-300"
+                >
+                  Reserve Your Ride →
+                </Link>
               </div>
             </div>
           </div>
@@ -433,9 +438,12 @@ const handleSubmit = async () => {
 
 
 
-                  <button className="w-full bg-[#4B3FD4] hover:bg-[#3b30b8] text-white text-sm font-semibold py-2.5 rounded-xl transition-colors">
+                   <Link
+                    to="/vehicles"
+                    className="w-full block text-center bg-[#4B3FD4] hover:bg-[#3b30b8] text-white text-sm font-semibold py-2.5 rounded-xl transition-colors"
+                  >
                     View Details
-                  </button>
+                  </Link>
                 </div>
               </div>
             ))}

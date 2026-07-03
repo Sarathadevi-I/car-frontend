@@ -24,7 +24,7 @@ import etios from "../../assets/etios.jpeg";
 import etios1 from "../../assets/etios1.jpeg";
 import etios2 from "../../assets/etios2.jpeg";
 import etios3 from "../../assets/etios3.jpeg";
-
+import { Link } from "react-router-dom";
 import tataZest1 from "../../assets/tataZest1.jpeg";
 import tataZest2 from "../../assets/tataZest2.jpeg";
 import tataZest3 from "../../assets/tataZest3.jpeg";
@@ -138,9 +138,12 @@ function VehicleCard({ car }) {
           <span className="flex items-center gap-1"><Fuel size={13} strokeWidth={1.8} /> {car.fuel}</span>
           <span className="flex items-center gap-1"><Wind size={13} strokeWidth={1.8} /> {car.ac}</span>
         </div>
-        <button className="w-full bg-[#4B3FD4] hover:bg-[#3b30b8] text-white text-sm font-semibold py-2.5 rounded-xl transition-colors">
- Call to Book →
-        </button>
+      <Link
+          to="/contact"
+          className="w-full block text-center bg-[#4B3FD4] hover:bg-[#3b30b8] text-white text-sm font-semibold py-2.5 rounded-xl transition-colors"
+        >
+           Reserve This Car →
+        </Link>
       </div>
     </div>
   );

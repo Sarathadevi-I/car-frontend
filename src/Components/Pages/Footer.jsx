@@ -1,5 +1,5 @@
-import { FaCar, FaFacebookF, FaInstagram, FaYoutube } from "react-icons/fa";
-import { FaXTwitter } from "react-icons/fa6";
+import { Link } from "react-router-dom";
+import { FaCar, FaInstagram, FaWhatsapp } from "react-icons/fa";
 import {
   MapPinIcon,
   EnvelopeIcon,
@@ -7,6 +7,13 @@ import {
   ArrowTopRightOnSquareIcon,
 } from "@heroicons/react/24/outline";
 
+// Single source of truth for the contact number (used for both Call & WhatsApp)
+const PHONE_DISPLAY = "+91 90802 02798";
+const PHONE_TEL = "+919080202798";       // for tel: link
+const PHONE_WA = "919080202798";         // for wa.me link (no + sign)
+const EMAIL = "ajithgymboy@gmail.com";
+
+const GMAIL_COMPOSE_URL = `https://mail.google.com/mail/?view=cm&fs=1&to=${EMAIL}`;
 const INFO_ITEMS = [
   {
     icon: <MapPinIcon className="w-5 h-5 text-white" />,
@@ -16,17 +23,36 @@ const INFO_ITEMS = [
   {
     icon: <EnvelopeIcon className="w-5 h-5 text-white" />,
     label: "Email",
-    value: "drivex@gmail.com",
+    value: EMAIL,
+    href: GMAIL_COMPOSE_URL,
   },
   {
     icon: <PhoneIcon className="w-5 h-5 text-white" />,
     label: "Phone",
-    value: "+91 90802 02798",
+    value: PHONE_DISPLAY,
+    href: `tel:${PHONE_TEL}`,
   },
 ];
 
-const USEFUL_LINKS = ["About us", "Contact us", "Gallery", "Blog", "F.A.Q"];
+// Matches Navbar's NAV_LINKS exactly — only routes that actually exist in the app
+const USEFUL_LINKS = [
+  { label: "Home",         to: "/" },
+  { label: "Vehicles",     to: "/vehicles" },
+  { label: "How It Works", to: "/how-it-works" },
+  { label: "About Us",     to: "/about" },
+  { label: "Contact Us",   to: "/contact" },
+];
+
+// All vehicle types route to the Vehicles listing page, filtered by type
 const VEHICLES = ["Sedan", "Cabriolet", "Pickup", "Minivan", "SUV"];
+
+// Social / quick-contact actions — each one is a real functional link now
+const SOCIALS = [
+  { icon: <FaInstagram />, label: "Instagram", href: "https://instagram.com" },
+  { icon: <FaWhatsapp />,  label: "WhatsApp",   href: `https://wa.me/${PHONE_WA}` },
+{ icon: <EnvelopeIcon className="w-4 h-4" />, label: "Email", href: GMAIL_COMPOSE_URL },
+  { icon: <PhoneIcon className="w-4 h-4" />,    label: "Call",  href: `tel:${PHONE_TEL}` },
+];
 
 const MAP_URL =
   "https://www.google.com/maps?q=DA+Cars+Self+Drive+Car+Rental+Pondicherry";
@@ -39,68 +65,77 @@ export default function Footer() {
       <div className="max-w-6xl mx-auto px-6 py-6 flex flex-wrap items-center gap-8 border-b border-gray-100">
 
         {/* Brand */}
-        <div className="flex items-center gap-2 mr-auto">
-          <FaCar className="text-2xl text-gray-900" />
-          <span className="text-base font-semibold text-gray-900 tracking-tight">
+        <Link to="/" className="flex items-center gap-2 mr-auto no-underline group">
+          <FaCar className="text-2xl text-[#0C2340] group-hover:text-[#FF6B2B] transition-colors" />
+          <span className="text-base font-semibold text-[#0C2340] tracking-tight">
             Car Rental
           </span>
-        </div>
+        </Link>
 
         {/* Info chips */}
-        {INFO_ITEMS.map(({ icon, label, value }) => (
-          <div key={label} className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-orange-400 flex items-center justify-center flex-shrink-0">
-              {icon}
+        {INFO_ITEMS.map(({ icon, label, value, href }) => {
+          const content = (
+            <>
+              <div className="w-10 h-10 rounded-full bg-[#FF6B2B] flex items-center justify-center flex-shrink-0">
+                {icon}
+              </div>
+              <div>
+                <p className="text-xs text-gray-400 leading-none mb-0.5">{label}</p>
+                <p className="text-sm font-medium text-[#0C2340]">{value}</p>
+              </div>
+            </>
+          );
+          return href ? (
+            <a key={label} href={href} className="flex items-center gap-3 hover:opacity-80 transition-opacity">
+              {content}
+            </a>
+          ) : (
+            <div key={label} className="flex items-center gap-3">
+              {content}
             </div>
-            <div>
-              <p className="text-xs text-gray-400 leading-none mb-0.5">{label}</p>
-              <p className="text-sm font-medium text-gray-900">{value}</p>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* ── Main footer body ── */}
-      <div className="max-w-6xl mx-auto px-6 py-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+      <div className="max-w-6xl mx-auto px-6 py-10 grid grid-cols-2 lg:grid-cols-4 gap-10">
 
         {/* Col 1 — Brand + socials */}
-        <div>
+        <div className="col-span-2 lg:col-span-1">
           <p className="text-sm text-gray-500 leading-relaxed mb-6 max-w-[200px]">
             Pondicherry's trusted self-drive car rental. Clean cars, transparent
             pricing, 24/7 support.
           </p>
           <div className="flex items-center gap-3">
-            {[
-              { icon: <FaFacebookF />, label: "Facebook" },
-              { icon: <FaInstagram />, label: "Instagram" },
-              { icon: <FaXTwitter />, label: "X (Twitter)" },
-              { icon: <FaYoutube />, label: "YouTube" },
-            ].map(({ icon, label }) => (
-              <button
+            {SOCIALS.map(({ icon, label, href }) => (
+              <a
                 key={label}
+                href={href}
+                target={href.startsWith("http") ? "_blank" : undefined}
+                rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
                 aria-label={label}
-                className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50 hover:text-gray-900 transition-colors text-sm"
+                className="w-8 h-8 rounded-full border-[1.5px] border-[#FF6B2B] flex items-center justify-center hover:bg-[#FF6B2B] hover:text-white transition-colors text-sm"
               >
                 {icon}
-              </button>
+              </a>
             ))}
           </div>
         </div>
 
         {/* Col 2 — Useful links */}
         <div>
-          <h3 className="text-sm font-semibold text-gray-900 mb-4">
+          <h3 className="text-sm font-bold text-[#0C2340] mb-4">
             Useful links
           </h3>
           <ul className="space-y-2.5">
-            {USEFUL_LINKS.map((link) => (
-              <li key={link}>
-                <a
-                  href="#"
-                  className="text-sm text-gray-500 hover:text-gray-900 transition-colors"
+            {USEFUL_LINKS.map(({ label, to }) => (
+              <li key={label}>
+                <Link
+                  to={to}
+                  className="text-sm text-gray-500 hover:text-[#1A6FD4] transition-colors"
                 >
-                  {link}
-                </a>
+                  {label}
+                </Link>
               </li>
             ))}
           </ul>
@@ -108,28 +143,27 @@ export default function Footer() {
 
         {/* Col 3 — Vehicles */}
         <div>
-          <h3 className="text-sm font-semibold text-gray-900 mb-4">
+          <h3 className="text-sm font-bold text-[#0C2340] mb-4">
             Vehicles
           </h3>
           <ul className="space-y-2.5">
             {VEHICLES.map((v) => (
               <li key={v}>
-                <a
-                  href="#"
-                  className="text-sm text-gray-500 hover:text-gray-900 transition-colors"
+                <Link
+                  to={`/vehicles?type=${encodeURIComponent(v)}`}
+                  className="text-sm text-gray-500 hover:text-[#1A6FD4] transition-colors"
                 >
                   {v}
-                </a>
+                </Link>
               </li>
             ))}
           </ul>
         </div>
 
         {/* Col 4 — Map */}
-        <div>
-          <h3 className="text-sm font-semibold text-gray-900 mb-4">Find us</h3>
+        <div className="col-span-2 lg:col-span-1">
+          <h3 className="text-sm font-bold text-[#0C2340] mb-4">Find us</h3>
 
-          {/* ✅ Fixed: was missing the opening <a tag */}
           <a
             href={MAP_URL}
             target="_blank"
@@ -150,18 +184,18 @@ export default function Footer() {
 
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="flex flex-col items-center">
-                <div className="w-9 h-9 rounded-full bg-orange-400 border-2 border-white flex items-center justify-center shadow-sm">
+                <div className="w-9 h-9 rounded-full bg-[#FF6B2B] border-2 border-white flex items-center justify-center shadow-sm">
                   <MapPinIcon className="w-5 h-5 text-white" />
                 </div>
                 <div className="mt-1.5 bg-white rounded-md px-2 py-0.5 shadow-sm border border-gray-100">
-                  <p className="text-[10px] font-semibold text-gray-800">
+                  <p className="text-[10px] font-semibold text-[#0C2340]">
                     DA Cars, Kottakuppam
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="absolute bottom-2 right-2 bg-orange-400 rounded-md px-2 py-1 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className="absolute bottom-2 right-2 bg-[#FF6B2B] rounded-md px-2 py-1 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
               <ArrowTopRightOnSquareIcon className="w-3 h-3 text-white" />
               <span className="text-[10px] text-white font-semibold">
                 Open Maps
@@ -170,17 +204,17 @@ export default function Footer() {
           </a>
 
           <div className="grid grid-cols-2 gap-2 mt-3">
-            <div className="bg-gray-50 rounded-lg px-3 py-2 border border-gray-100">
-              <p className="text-[10px] text-gray-400 mb-0.5">Address</p>
-              <p className="text-xs text-gray-700 font-medium leading-snug">
+            <div className="bg-[#EEF4FF] rounded-lg px-3 py-2 border border-[#E8EFF8]">
+              <p className="text-[10px] text-slate-400 mb-0.5">Address</p>
+              <p className="text-xs text-[#0C2340] font-semibold leading-snug">
                 45, SH 49,
                 <br />
                 Kottakuppam, Puducherry
               </p>
             </div>
-            <div className="bg-gray-50 rounded-lg px-3 py-2 border border-gray-100">
-              <p className="text-[10px] text-gray-400 mb-0.5">Phone</p>
-              <p className="text-xs text-gray-700 font-medium leading-snug">
+            <div className="bg-[#EEF4FF] rounded-lg px-3 py-2 border border-[#E8EFF8]">
+              <p className="text-[10px] text-slate-400 mb-0.5">Phone</p>
+              <p className="text-xs text-[#0C2340] font-semibold leading-snug">
                 +91 90802
                 <br />
                 02798
@@ -191,9 +225,9 @@ export default function Footer() {
       </div>
 
       {/* ── Bottom copyright bar ── */}
-      <div className="border-t border-gray-100 py-4 text-center">
-        <p className="text-xs text-gray-400">
-          © Copyright DA Cars 2024. All rights reserved.
+      <div className="border-t border-gray-100 py-4 text-center ">
+        <p className="text-x text-black/50">
+          © Copyright DA Cars 2026. All rights reserved.
         </p>
       </div>
     </footer>

@@ -5,6 +5,7 @@ import Rental from "../../assets/rental.png"
 import Clean from "../../assets/clean.png"
 import Parking from "../../assets/parking.png"
 import Insurance from "../../assets/insurance.png"
+import {Link} from 'react-router-dom'
 const features = [
   {
     num:   "01",
@@ -121,18 +122,18 @@ export default function AboutUs() {
         </div>
 
         {/* ── Stats ── */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-10 text-center mb-24">
+       <div className="grid grid-cols-3 gap-4 sm:gap-10 text-center mb-8 sm:mb-24">
           <div>
-            <p className="text-[32px] font-extrabold text-[#4B3FD4]">500+</p>
-            <p className="text-[13px] text-gray-400 mt-1">Happy customers</p>
+            <p className="text-[24px] sm:text-[32px] font-extrabold text-[#4B3FD4]">500+</p>
+            <p className="text-[11px] sm:text-[13px] text-gray-400 mt-1">Happy customers</p>
           </div>
           <div>
-            <p className="text-[32px] font-extrabold text-[#4B3FD4]">7</p>
-            <p className="text-[13px] text-gray-400 mt-1">Cars in fleet</p>
+            <p className="text-[24px] sm:text-[32px] font-extrabold text-[#4B3FD4]">7</p>
+            <p className="text-[11px] sm:text-[13px] text-gray-400 mt-1">Cars in fleet</p>
           </div>
           <div>
-     <p className="text-[32px] font-extrabold text-[#4B3FD4]">2</p>
-<p className="text-[13px] text-gray-400 mt-1">Branches in Pondicherry</p>
+     <p className="text-[24px] sm:text-[32px] font-extrabold text-[#4B3FD4]">2</p>
+<p className="text-[11px] sm:text-[13px] text-gray-400 mt-1">Branches in Pondicherry</p>
           </div>
         </div>
 
@@ -298,8 +299,10 @@ pointerEvents: "none",
 
     {/* CTA */}
     <div className="flex flex-wrap items-center gap-4 sm:gap-6" style={{ marginTop: "8px" }}>
-      <button
+  <Link
+        to="/contact"
         style={{
+          display: "inline-block",
           background: "#FF6B2B",
           color: "#fff",
           border: "none",
@@ -308,17 +311,14 @@ pointerEvents: "none",
           fontSize: "14px",
           fontWeight: 700,
           cursor: "pointer",
+          textDecoration: "none",
         }}
       >
         Book a car →
-      </button>
+      </Link>
       <div>
-        <p style={{ margin: 0, color: "#aaa", fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.15em" }}>
-          Call us now
-        </p>
-        <p style={{ margin: "2px 0 0", color: "#0C2340", fontSize: "15px", fontWeight: 700 }}>
-        +91 90802 02798
-        </p>
+       
+      
       </div>
     </div>
   </div>
