@@ -1,3 +1,4 @@
+import { motion } from "framer-motion";
 import Dacar from "../../assets/dacar.png"
 import Customer from "../../assets/customercare.png"
 import Road from "../../assets/road.png"
@@ -56,61 +57,101 @@ const overlayStyles = {
   purple: "linear-gradient(to top, rgba(75,63,212,0.97) 0%, rgba(75,63,212,0.6) 65%, transparent 100%)",
 };
 
+// ── Shared motion variants (same as HowItWorks) ──
+const fadeUp = {
+  hidden: { opacity: 0, y: 24 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } },
+};
+const staggerParent = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.1, delayChildren: 0.05 } },
+};
+
 export default function AboutUs() {
   return (
     <div className="min-h-screen bg-white pt-24 pb-16 px-6 overflow-x-hidden">
       <div className="max-w-[1100px] mx-auto">
 
       {/* ── Header ── */}
-<div className="text-center mb-16">
-  
-  <p className="text-[13px] text-slate-400">
-    Home / <span className="text-[#0C2340] font-medium">About Us</span>
-  </p>
-</div>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.4 }}
+        className="text-center mb-16"
+      >
+        <p className="text-[13px] text-slate-400">
+          Home / <span className="text-[#0C2340] font-medium">About Us</span>
+        </p>
+      </motion.div>
 
      {/* ── Top section ── */}
-<div className="grid grid-cols-1 lg:grid-cols-[1fr_1fr_1fr] gap-10 mb-16">
-  <h2 className="text-[26px] font-extrabold text-gray-900 leading-snug">
-    Pondicherry's car rental that comes to you
-  </h2>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.3 }}
+        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+        className="grid grid-cols-1 lg:grid-cols-[1fr_1fr_1fr] gap-10 mb-16"
+      >
+        <h2 className="text-[26px] font-extrabold text-gray-900 leading-snug">
+          Pondicherry's car rental that comes to you
+        </h2>
 
-  <div className="space-y-8">
-    <div>
-      <h3 className="text-[15px] font-bold text-gray-900 mb-2">Wide Fleet Selection</h3>
-      <p className="text-[13px] text-gray-400 leading-relaxed">
-        From compact hatchbacks to spacious SUVs — 7 well-maintained cars ready to be
-        delivered anywhere in Pondicherry.
-      </p>
-    </div>
-    <div>
-      <h3 className="text-[15px] font-bold text-gray-900 mb-2">Doorstep Delivery</h3>
-      <p className="text-[13px] text-gray-400 leading-relaxed">
-        Just call us and we bring the car to your hotel, home, or any location in
-        Pondicherry. No office visit needed.
-      </p>
-    </div>
-  </div>
+        <motion.div
+          variants={staggerParent}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, amount: 0.3 }}
+          className="space-y-8"
+        >
+          <motion.div variants={fadeUp}>
+            <h3 className="text-[15px] font-bold text-gray-900 mb-2">Wide Fleet Selection</h3>
+            <p className="text-[13px] text-gray-400 leading-relaxed">
+              From compact hatchbacks to spacious SUVs — 7 well-maintained cars ready to be
+              delivered anywhere in Pondicherry.
+            </p>
+          </motion.div>
+          <motion.div variants={fadeUp}>
+            <h3 className="text-[15px] font-bold text-gray-900 mb-2">Doorstep Delivery</h3>
+            <p className="text-[13px] text-gray-400 leading-relaxed">
+              Just call us and we bring the car to your hotel, home, or any location in
+              Pondicherry. No office visit needed.
+            </p>
+          </motion.div>
+        </motion.div>
 
-  <div className="space-y-8">
-    <div>
-      <h3 className="text-[15px] font-bold text-gray-900 mb-2">Always-On Support</h3>
-      <p className="text-[13px] text-gray-400 leading-relaxed">
-        Our team is available via call or WhatsApp around the clock. Last-minute booking
-        or mid-trip help — we're always reachable.
-      </p>
-    </div>
-    <div>
-      <h3 className="text-[15px] font-bold text-gray-900 mb-2">Transparent Pricing</h3>
-      <p className="text-[13px] text-gray-400 leading-relaxed">
-        Fixed daily rates with zero hidden charges. The price confirmed at booking is
-        exactly what you pay — nothing more.
-      </p>
-    </div>
-  </div>
-</div>
+        <motion.div
+          variants={staggerParent}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, amount: 0.3 }}
+          className="space-y-8"
+        >
+          <motion.div variants={fadeUp}>
+            <h3 className="text-[15px] font-bold text-gray-900 mb-2">Always-On Support</h3>
+            <p className="text-[13px] text-gray-400 leading-relaxed">
+              Our team is available via call or WhatsApp around the clock. Last-minute booking
+              or mid-trip help — we're always reachable.
+            </p>
+          </motion.div>
+          <motion.div variants={fadeUp}>
+            <h3 className="text-[15px] font-bold text-gray-900 mb-2">Transparent Pricing</h3>
+            <p className="text-[13px] text-gray-400 leading-relaxed">
+              Fixed daily rates with zero hidden charges. The price confirmed at booking is
+              exactly what you pay — nothing more.
+            </p>
+          </motion.div>
+        </motion.div>
+      </motion.div>
+
         {/* ── Video section ── */}
-        <div className="relative w-full rounded-2xl overflow-hidden mb-16" style={{ paddingTop: "42%" }}>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.97 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          className="relative w-full rounded-2xl overflow-hidden mb-16"
+          style={{ paddingTop: "42%" }}
+        >
           <iframe
             className="absolute inset-0 w-full h-full"
             src="https://www.youtube.com/embed/tEYDMPOFBzY?autoplay=0&rel=0&modestbranding=1"
@@ -119,27 +160,39 @@ export default function AboutUs() {
             allowFullScreen
             style={{ border: "none" }}
           />
-        </div>
+        </motion.div>
 
         {/* ── Stats ── */}
-       <div className="grid grid-cols-3 gap-4 sm:gap-10 text-center mb-8 sm:mb-24">
-          <div>
+        <motion.div
+          variants={staggerParent}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, amount: 0.3 }}
+          className="grid grid-cols-3 gap-4 sm:gap-10 text-center mb-8 sm:mb-24"
+        >
+          <motion.div variants={fadeUp}>
             <p className="text-[24px] sm:text-[32px] font-extrabold text-[#4B3FD4]">500+</p>
             <p className="text-[11px] sm:text-[13px] text-gray-400 mt-1">Happy customers</p>
-          </div>
-          <div>
+          </motion.div>
+          <motion.div variants={fadeUp}>
             <p className="text-[24px] sm:text-[32px] font-extrabold text-[#4B3FD4]">7</p>
             <p className="text-[11px] sm:text-[13px] text-gray-400 mt-1">Cars in fleet</p>
-          </div>
-          <div>
-     <p className="text-[24px] sm:text-[32px] font-extrabold text-[#4B3FD4]">2</p>
-<p className="text-[11px] sm:text-[13px] text-gray-400 mt-1">Branches in Pondicherry</p>
-          </div>
-        </div>
+          </motion.div>
+          <motion.div variants={fadeUp}>
+            <p className="text-[24px] sm:text-[32px] font-extrabold text-[#4B3FD4]">2</p>
+            <p className="text-[11px] sm:text-[13px] text-gray-400 mt-1">Branches in Pondicherry</p>
+          </motion.div>
+        </motion.div>
 
         {/* ── Why DriveX feature cards ── */}
         <div className="mb-24">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 gap-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 gap-6"
+          >
             <div>
               <p className="text-[11px] font-bold tracking-[.2em] uppercase text-[#4B3FD4] mb-3">
               Why DA Cars
@@ -155,12 +208,30 @@ export default function AboutUs() {
             <p className="text-[12px] text-slate-400 sm:max-w-[160px] sm:text-right leading-[1.8] shrink-0">
               From first booking to last kilometre — every detail is handled.
             </p>
-          </div>
+          </motion.div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+          <motion.div
+            variants={staggerParent}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.15 }}
+            className="grid grid-cols-2 sm:grid-cols-3 gap-3"
+          >
             {features.map(({ num, label, pill, img, overlay }) => (
-              <div key={num} className="relative h-[180px] sm:h-[260px] rounded-2xl overflow-hidden">
-                <img src={img} alt={label} className="w-full h-full object-cover" />
+              <motion.div
+                key={num}
+                variants={fadeUp}
+                whileHover={{ y: -6, boxShadow: "0 16px 36px rgba(12,35,64,0.18)" }}
+                transition={{ type: "spring", stiffness: 260, damping: 22 }}
+                className="relative h-[180px] sm:h-[260px] rounded-2xl overflow-hidden"
+              >
+                <motion.img
+                  src={img}
+                  alt={label}
+                  className="w-full h-full object-cover"
+                  whileHover={{ scale: 1.08 }}
+                  transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                />
                 <div
                   className="absolute bottom-0 left-0 right-0 p-3 sm:p-4"
                   style={{ background: overlayStyles[overlay] }}
@@ -171,13 +242,17 @@ export default function AboutUs() {
                     {pill}
                   </span>
                 </div>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
 
 {/* ── DA Cars Magazine Section ── */}
-<div
+<motion.div
+  initial={{ opacity: 0, y: 24 }}
+  whileInView={{ opacity: 1, y: 0 }}
+  viewport={{ once: true, amount: 0.2 }}
+  transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
   className="mt-4 grid grid-cols-1 lg:grid-cols-[55%_45%] items-start relative"
 >
   {/* Left — Image */}
@@ -227,7 +302,9 @@ pointerEvents: "none",
     </h1>
 
     {/* Image */}
-    <div
+    <motion.div
+      whileHover={{ scale: 1.02 }}
+      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
       className="w-full h-[220px] sm:h-[300px] lg:h-[420px]"
       style={{
         overflow: "hidden",
@@ -239,7 +316,7 @@ pointerEvents: "none",
         alt="DA Cars Pondicherry"
         style={{ width: "100%", height: "100%", objectFit: "cover" }}
       />
-    </div>
+    </motion.div>
   </div>
 
   {/* Right — White content */}
@@ -267,14 +344,20 @@ pointerEvents: "none",
     </p>
 
     {/* Features */}
-    <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+    <motion.div
+      variants={staggerParent}
+      initial="hidden"
+      whileInView="show"
+      viewport={{ once: true, amount: 0.3 }}
+      style={{ display: "flex", flexDirection: "column", gap: "14px" }}
+    >
       {[
         "Doorstep delivery available across Pondicherry",
         "All cars sanitized and inspected before every trip",
         "No hidden charges — price confirmed at booking",
         "24/7 support via WhatsApp & phone",
       ].map((text, i) => (
-        <div key={i} style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+        <motion.div key={i} variants={fadeUp} style={{ display: "flex", alignItems: "center", gap: "12px" }}>
           <span
             style={{
               width: "22px",
@@ -293,36 +376,38 @@ pointerEvents: "none",
             ✓
           </span>
           <p style={{ margin: 0, color: "#444", fontSize: "13px" }}>{text}</p>
-        </div>
+        </motion.div>
       ))}
-    </div>
+    </motion.div>
 
     {/* CTA */}
     <div className="flex flex-wrap items-center gap-4 sm:gap-6" style={{ marginTop: "8px" }}>
-  <Link
-        to="/contact"
-        style={{
-          display: "inline-block",
-          background: "#FF6B2B",
-          color: "#fff",
-          border: "none",
-          borderRadius: "999px",
-          padding: "12px 28px",
-          fontSize: "14px",
-          fontWeight: 700,
-          cursor: "pointer",
-          textDecoration: "none",
-        }}
-      >
-        Book a car →
-      </Link>
+      <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} transition={{ type: "spring", stiffness: 400, damping: 17 }}>
+        <Link
+          to="/contact"
+          style={{
+            display: "inline-block",
+            background: "#FF6B2B",
+            color: "#fff",
+            border: "none",
+            borderRadius: "999px",
+            padding: "12px 28px",
+            fontSize: "14px",
+            fontWeight: 700,
+            cursor: "pointer",
+            textDecoration: "none",
+          }}
+        >
+          Book a car →
+        </Link>
+      </motion.div>
       <div>
-       
-      
+
+
       </div>
     </div>
   </div>
-</div>
+</motion.div>
       </div>
     </div>
   );

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { motion } from "framer-motion";
 
 const INFO_CARDS = [
   {
@@ -74,6 +75,16 @@ const inputStyle = {
 };
 
 const placeholderColor = "rgba(255,255,255,0.55)";
+
+// ── Shared motion variants (same as HowItWorks / AboutUs) ──
+const fadeUp = {
+  hidden: { opacity: 0, y: 24 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } },
+};
+const staggerParent = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.1, delayChildren: 0.05 } },
+};
 
 export default function ContactUs() {
   const [form, setForm] = useState({
@@ -173,12 +184,16 @@ export default function ContactUs() {
       <div className="px-4 sm:px-6" style={{ maxWidth: 1100, margin: "0 auto" }}>
 
         {/* ── Page Header ── */}
-        <div style={{ textAlign: "center", marginBottom: 48 }}>
-          
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.4 }}
+          style={{ textAlign: "center", marginBottom: 48 }}
+        >
           <p style={{ fontSize: 13, color: "#94A3B8", margin: 0 }}>
             Home / <span style={{ color: "#0C2340", fontWeight: 600 }}>Contact Us</span>
           </p>
-        </div>
+        </motion.div>
 
         {/* ── Main Grid: Booking Form + Map ── */}
         <div
@@ -189,7 +204,11 @@ export default function ContactUs() {
           }}
         >
           {/* ── Booking Card ── */}
-          <div
+          <motion.div
+            initial={{ opacity: 0, x: -24 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
             style={{
               background: "linear-gradient(145deg, #4B3FD4 0%, #3730A3 100%)",
               borderRadius: 20,
@@ -320,9 +339,12 @@ export default function ContactUs() {
             </div>
 
             {/* Book Now */}
-            <button
+            <motion.button
               className="book-btn"
               onClick={handleSubmit}
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.96 }}
+              transition={{ type: "spring", stiffness: 400, damping: 17 }}
               style={{
                 width: "100%",
                 padding: "12px",
@@ -334,24 +356,28 @@ export default function ContactUs() {
                 fontWeight: 700,
                 fontSize: 14,
                 cursor: "pointer",
-                transition: "background 0.2s",
                 marginTop: 4,
               }}
             >
               Book Now →
-            </button>
+            </motion.button>
 
             {/* ⬇️ CHANGE 5: inline success/error message instead of alert() */}
             {message && (
-              <p style={{
-                fontSize: 12,
-                textAlign: "center",
-                margin: "2px 0 0",
-                fontWeight: 600,
-                color: message.type === "success" ? "#4ade80" : "#FF6B2B",
-              }}>
+              <motion.p
+                initial={{ opacity: 0, y: -6 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+                style={{
+                  fontSize: 12,
+                  textAlign: "center",
+                  margin: "2px 0 0",
+                  fontWeight: 600,
+                  color: message.type === "success" ? "#4ade80" : "#FF6B2B",
+                }}
+              >
                 {message.text}
-              </p>
+              </motion.p>
             )}
 
             {/* Trust badges */}
@@ -365,10 +391,14 @@ export default function ContactUs() {
                 </span>
               ))}
             </div>
-          </div>
+          </motion.div>
 
           {/* ── Map ── */}
-          <div
+          <motion.div
+            initial={{ opacity: 0, x: 24 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
             className="min-h-[260px] lg:min-h-[360px]"
             style={{
               borderRadius: 20,
@@ -387,19 +417,26 @@ export default function ContactUs() {
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
             />
-          </div>
+          </motion.div>
         </div>
 
         {/* ── Info Cards ── */}
-        <div
+        <motion.div
+          variants={staggerParent}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, amount: 0.2 }}
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
           style={{
             marginBottom: 64,
           }}
         >
           {INFO_CARDS.map(({ icon, label, value, iconBg }) => (
-            <div
+            <motion.div
               key={label}
+              variants={fadeUp}
+              whileHover={{ y: -5, boxShadow: "0 12px 28px rgba(255,107,43,0.18)" }}
+              transition={{ type: "spring", stiffness: 260, damping: 22 }}
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -409,7 +446,9 @@ export default function ContactUs() {
                 padding: "16px 18px",
               }}
             >
-              <div
+              <motion.div
+                whileHover={{ scale: 1.1, rotate: 6 }}
+                transition={{ type: "spring", stiffness: 300 }}
                 style={{
                   width: 40,
                   height: 40,
@@ -423,7 +462,7 @@ export default function ContactUs() {
                 }}
               >
                 {icon}
-              </div>
+              </motion.div>
               <div>
                 <p style={{ fontSize: 10, color: "#94A3B8", margin: "0 0 2px", fontWeight: 600, letterSpacing: "0.04em" }}>
                   {label}
@@ -432,13 +471,17 @@ export default function ContactUs() {
                   {value}
                 </p>
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
 
         {/* ── Blog Section ── */}
         <div>
-          <h2
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
             className="text-[20px] sm:text-[24px]"
             style={{
               fontFamily: "'Plus Jakarta Sans', sans-serif",
@@ -450,11 +493,24 @@ export default function ContactUs() {
             }}
           >
             Latest blog posts &amp; news
-          </h2>
+          </motion.h2>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+          <motion.div
+            variants={staggerParent}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.15 }}
+            className="grid grid-cols-1 sm:grid-cols-3 gap-5"
+          >
             {BLOG_POSTS.map(({ img, title, tag, date }) => (
-              <div key={title} className="blog-card" style={{ cursor: "pointer" }}>
+              <motion.div
+                key={title}
+                variants={fadeUp}
+                whileHover={{ y: -6 }}
+                transition={{ type: "spring", stiffness: 260, damping: 22 }}
+                className="blog-card"
+                style={{ cursor: "pointer" }}
+              >
                 <div style={{ borderRadius: 14, overflow: "hidden", marginBottom: 12, height: 180 }}>
                   <img
                     src={img}
@@ -471,9 +527,9 @@ export default function ContactUs() {
                 <p style={{ fontSize: 11, color: "#94A3B8", margin: 0 }}>
                   {tag} / <span>{date}</span>
                 </p>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
 
       </div>

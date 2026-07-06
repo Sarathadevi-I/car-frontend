@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Settings2, Fuel, Wind, ChevronLeft, ChevronRight } from "lucide-react";
 import Brezza from "../../assets/brezza.jpeg";
 import Brezza1 from "../../assets/brezza1.jpeg";
@@ -50,6 +51,17 @@ const TabIcon = ({ type }) => {
 
 const TABS = ["All", "Hatchback", "Sedan", "SUV"];
 
+// ── Motion variants (shared feel with Homepage) ──
+const fadeUp = {
+  hidden: { opacity: 0, y: 24 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } },
+  exit: { opacity: 0, y: -12, transition: { duration: 0.25, ease: "easeIn" } },
+};
+const staggerParent = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.08, delayChildren: 0.05 } },
+};
+
 function Carousel({ images, name }) {
   const [current, setCurrent] = useState(0);
 
@@ -63,52 +75,58 @@ function Carousel({ images, name }) {
   };
 
   return (
- <div className="relative overflow-hidden bg-slate-100 group w-full cursor-pointer" style={{ aspectRatio: "4/3" }}>
-      <div
+    <div className="relative overflow-hidden bg-slate-100 group w-full cursor-pointer" style={{ aspectRatio: "4/3" }}>
+      <motion.div
         className="flex h-full"
-        style={{
-          transform: `translateX(-${current * 100}%)`,
-          transition: "transform 0.35s ease-in-out",
-        }}
+        animate={{ x: `-${current * 100}%` }}
+        transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
       >
         {images.map((img, i) => (
           <div key={i} className="min-w-full h-full flex-shrink-0">
-            <img
+            <motion.img
               src={img}
               alt={`${name} view ${i + 1}`}
               style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
+              whileHover={{ scale: 1.06 }}
+              transition={{ duration: 0.5, ease: "easeOut" }}
             />
           </div>
         ))}
-      </div>
+      </motion.div>
 
-      <button
+      <motion.button
         onClick={prev}
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
         className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/85 hover:bg-white text-[#0C2340] rounded-full p-1 shadow-md transition-opacity duration-200"
       >
         <ChevronLeft size={18} strokeWidth={2.5} />
-      </button>
+      </motion.button>
 
-      <button
+      <motion.button
         onClick={next}
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
         className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/85 hover:bg-white text-[#0C2340] rounded-full p-1 shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-200"
       >
         <ChevronRight size={18} strokeWidth={2.5} />
-      </button>
+      </motion.button>
 
       <div className="absolute bottom-2.5 left-1/2 -translate-x-1/2 flex gap-1.5">
         {images.map((_, i) => (
-          <button
+          <motion.button
             key={i}
             onClick={(e) => { e.stopPropagation(); setCurrent(i); }}
-            style={{
+            animate={{
               width: i === current ? 16 : 6,
+              background: i === current ? "#ffffff" : "rgba(255,255,255,0.45)",
+            }}
+            transition={{ duration: 0.25 }}
+            style={{
               height: 6,
               borderRadius: 9999,
-              background: i === current ? "#fff" : "rgba(255,255,255,0.45)",
               border: "none",
               cursor: "pointer",
-              transition: "all 0.2s",
               padding: 0,
             }}
           />
@@ -120,7 +138,16 @@ function Carousel({ images, name }) {
 
 function VehicleCard({ car }) {
   return (
-    <div className="bg-white rounded-2xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col">
+    <motion.div
+      layout
+      variants={fadeUp}
+      initial="hidden"
+      animate="show"
+      exit="exit"
+      whileHover={{ y: -6, boxShadow: "0 20px 40px rgba(12,35,64,0.14)" }}
+      transition={{ type: "spring", stiffness: 260, damping: 22 }}
+      className="bg-white rounded-2xl overflow-hidden border border-slate-100 shadow-sm flex flex-col"
+    >
       <Carousel images={car.images} name={car.name} />
       <div className="p-5 flex flex-col gap-4 flex-1 justify-between">
         <div className="flex justify-between items-start">
@@ -138,14 +165,16 @@ function VehicleCard({ car }) {
           <span className="flex items-center gap-1"><Fuel size={13} strokeWidth={1.8} /> {car.fuel}</span>
           <span className="flex items-center gap-1"><Wind size={13} strokeWidth={1.8} /> {car.ac}</span>
         </div>
-      <Link
-          to="/contact"
-          className="w-full block text-center bg-[#4B3FD4] hover:bg-[#3b30b8] text-white text-sm font-semibold py-2.5 rounded-xl transition-colors"
-        >
-           Reserve This Car →
-        </Link>
+        <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+          <Link
+            to="/contact"
+            className="w-full block text-center bg-[#4B3FD4] hover:bg-[#3b30b8] text-white text-sm font-semibold py-2.5 rounded-xl transition-colors"
+          >
+            Reserve This Car →
+          </Link>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -156,27 +185,44 @@ export default function VehicleGroupSelect() {
   return (
     <div className="min-h-screen bg-white pt-24 pb-16 px-6">
       <div className="max-w-[1200px] mx-auto">
-<div className="text-center mb-10">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.4 }}
+          className="text-center mb-10"
+        >
+          <p className="text-[13px] text-slate-400">
+            Home / <span className="text-[#0C2340] font-medium">Vehicles</span>
+          </p>
+        </motion.div>
 
-  <p className="text-[13px] text-slate-400">
-    Home / <span className="text-[#0C2340] font-medium">Vehicles</span>
-  </p>
-</div>
-        <div className="text-center mb-10">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+          className="text-center mb-10"
+        >
           <h1 className="text-[28px] font-extrabold text-[#0C2340] tracking-tight mb-2">
-          Our Fleet in Pondicherry
+            Our Fleet in Pondicherry
           </h1>
           <p className="text-[14px] text-slate-400">
-          We deliver any of these cars to your doorstep. Call us or book online — we'll handle the rest
+            We deliver any of these cars to your doorstep. Call us or book online — we'll handle the rest
           </p>
-        </div>
+        </motion.div>
 
-        <div className="flex flex-wrap justify-center gap-2 mb-8">
+        <motion.div
+          className="flex flex-wrap justify-center gap-2 mb-8"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+        >
           {TABS.map((tab) => (
-            <button
+            <motion.button
               key={tab}
               onClick={() => setActive(tab)}
-              className={`flex items-center gap-1.5 px-4 py-[7px] rounded-full text-[13px] font-semibold transition-all
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className={`flex items-center gap-1.5 px-4 py-[7px] rounded-full text-[13px] font-semibold transition-colors duration-200
                 ${active === tab
                   ? "bg-[#4B3FD4] text-white shadow-sm"
                   : "bg-white text-slate-600 border border-slate-200 hover:border-[#4B3FD4] hover:text-[#4B3FD4]"
@@ -184,21 +230,36 @@ export default function VehicleGroupSelect() {
             >
               {tab !== "All" && <TabIcon type={tab} />}
               {tab === "All" ? "All Vehicles" : tab}
-            </button>
+            </motion.button>
           ))}
-        </div>
+        </motion.div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-          {filtered.map((car) => (
-            <VehicleCard key={car.id} car={car} />
-          ))}
-        </div>
+        <motion.div
+          layout
+          className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6"
+          variants={staggerParent}
+          initial="hidden"
+          animate="show"
+        >
+          <AnimatePresence mode="popLayout">
+            {filtered.map((car) => (
+              <VehicleCard key={car.id} car={car} />
+            ))}
+          </AnimatePresence>
+        </motion.div>
 
-        {filtered.length === 0 && (
-          <p className="text-center text-slate-400 text-sm py-20">
-         No vehicles in this category. Call us — we may have what you need!
-          </p>
-        )}
+        <AnimatePresence>
+          {filtered.length === 0 && (
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="text-center text-slate-400 text-sm py-20"
+            >
+              No vehicles in this category. Call us — we may have what you need!
+            </motion.p>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );

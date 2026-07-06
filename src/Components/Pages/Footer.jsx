@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import { FaCar, FaInstagram, FaWhatsapp } from "react-icons/fa";
 import {
   MapPinIcon,
@@ -57,28 +58,50 @@ const SOCIALS = [
 const MAP_URL =
   "https://www.google.com/maps?q=DA+Cars+Self+Drive+Car+Rental+Pondicherry";
 
+// ── Shared motion variants (same as other pages) ──
+const fadeUp = {
+  hidden: { opacity: 0, y: 24 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } },
+};
+const staggerParent = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.08, delayChildren: 0.05 } },
+};
+
 export default function Footer() {
   return (
     <footer className="bg-white border-t border-gray-100 font-sans">
 
       {/* ── Top info bar ── */}
-      <div className="max-w-6xl mx-auto px-6 py-6 flex flex-wrap items-center gap-8 border-b border-gray-100">
+      <motion.div
+        variants={staggerParent}
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true, amount: 0.3 }}
+        className="max-w-6xl mx-auto px-6 py-6 flex flex-wrap items-center gap-8 border-b border-gray-100"
+      >
 
         {/* Brand */}
-        <Link to="/" className="flex items-center gap-2 mr-auto no-underline group">
-          <FaCar className="text-2xl text-[#0C2340] group-hover:text-[#FF6B2B] transition-colors" />
-          <span className="text-base font-semibold text-[#0C2340] tracking-tight">
-            Car Rental
-          </span>
-        </Link>
+        <motion.div variants={fadeUp} className="mr-auto">
+          <Link to="/" className="flex items-center gap-2 no-underline group">
+            <FaCar className="text-2xl text-[#0C2340] group-hover:text-[#FF6B2B] transition-colors" />
+            <span className="text-base font-semibold text-[#0C2340] tracking-tight">
+              Car Rental
+            </span>
+          </Link>
+        </motion.div>
 
         {/* Info chips */}
         {INFO_ITEMS.map(({ icon, label, value, href }) => {
           const content = (
             <>
-              <div className="w-10 h-10 rounded-full bg-[#FF6B2B] flex items-center justify-center flex-shrink-0">
+              <motion.div
+                whileHover={{ scale: 1.1, rotate: 6 }}
+                transition={{ type: "spring", stiffness: 300 }}
+                className="w-10 h-10 rounded-full bg-[#FF6B2B] flex items-center justify-center flex-shrink-0"
+              >
                 {icon}
-              </div>
+              </motion.div>
               <div>
                 <p className="text-xs text-gray-400 leading-none mb-0.5">{label}</p>
                 <p className="text-sm font-medium text-[#0C2340]">{value}</p>
@@ -86,44 +109,58 @@ export default function Footer() {
             </>
           );
           return href ? (
-            <a key={label} href={href} className="flex items-center gap-3 hover:opacity-80 transition-opacity">
+            <motion.a
+              key={label}
+              variants={fadeUp}
+              href={href}
+              className="flex items-center gap-3 hover:opacity-80 transition-opacity"
+            >
               {content}
-            </a>
+            </motion.a>
           ) : (
-            <div key={label} className="flex items-center gap-3">
+            <motion.div key={label} variants={fadeUp} className="flex items-center gap-3">
               {content}
-            </div>
+            </motion.div>
           );
         })}
-      </div>
+      </motion.div>
 
       {/* ── Main footer body ── */}
-      <div className="max-w-6xl mx-auto px-6 py-10 grid grid-cols-2 lg:grid-cols-4 gap-10">
+      <motion.div
+        variants={staggerParent}
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true, amount: 0.15 }}
+        className="max-w-6xl mx-auto px-6 py-10 grid grid-cols-2 lg:grid-cols-4 gap-10"
+      >
 
         {/* Col 1 — Brand + socials */}
-        <div className="col-span-2 lg:col-span-1">
+        <motion.div variants={fadeUp} className="col-span-2 lg:col-span-1">
           <p className="text-sm text-gray-500 leading-relaxed mb-6 max-w-[200px]">
             Pondicherry's trusted self-drive car rental. Clean cars, transparent
             pricing, 24/7 support.
           </p>
           <div className="flex items-center gap-3">
             {SOCIALS.map(({ icon, label, href }) => (
-              <a
+              <motion.a
                 key={label}
                 href={href}
                 target={href.startsWith("http") ? "_blank" : undefined}
                 rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
                 aria-label={label}
+                whileHover={{ scale: 1.15, y: -3 }}
+                whileTap={{ scale: 0.95 }}
+                transition={{ type: "spring", stiffness: 350, damping: 18 }}
                 className="w-8 h-8 rounded-full border-[1.5px] border-[#FF6B2B] flex items-center justify-center hover:bg-[#FF6B2B] hover:text-white transition-colors text-sm"
               >
                 {icon}
-              </a>
+              </motion.a>
             ))}
           </div>
-        </div>
+        </motion.div>
 
         {/* Col 2 — Useful links */}
-        <div>
+        <motion.div variants={fadeUp}>
           <h3 className="text-sm font-bold text-[#0C2340] mb-4">
             Useful links
           </h3>
@@ -139,10 +176,10 @@ export default function Footer() {
               </li>
             ))}
           </ul>
-        </div>
+        </motion.div>
 
         {/* Col 3 — Vehicles */}
-        <div>
+        <motion.div variants={fadeUp}>
           <h3 className="text-sm font-bold text-[#0C2340] mb-4">
             Vehicles
           </h3>
@@ -158,16 +195,18 @@ export default function Footer() {
               </li>
             ))}
           </ul>
-        </div>
+        </motion.div>
 
         {/* Col 4 — Map */}
-        <div className="col-span-2 lg:col-span-1">
+        <motion.div variants={fadeUp} className="col-span-2 lg:col-span-1">
           <h3 className="text-sm font-bold text-[#0C2340] mb-4">Find us</h3>
 
-          <a
+          <motion.a
             href={MAP_URL}
             target="_blank"
             rel="noopener noreferrer"
+            whileHover={{ scale: 1.02 }}
+            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
             className="block rounded-xl overflow-hidden border border-gray-200 relative h-36 group"
             aria-label="Open location in Google Maps"
           >
@@ -184,9 +223,12 @@ export default function Footer() {
 
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="flex flex-col items-center">
-                <div className="w-9 h-9 rounded-full bg-[#FF6B2B] border-2 border-white flex items-center justify-center shadow-sm">
+                <motion.div
+                  whileHover={{ y: -3 }}
+                  className="w-9 h-9 rounded-full bg-[#FF6B2B] border-2 border-white flex items-center justify-center shadow-sm"
+                >
                   <MapPinIcon className="w-5 h-5 text-white" />
-                </div>
+                </motion.div>
                 <div className="mt-1.5 bg-white rounded-md px-2 py-0.5 shadow-sm border border-gray-100">
                   <p className="text-[10px] font-semibold text-[#0C2340]">
                     DA Cars, Kottakuppam
@@ -201,7 +243,7 @@ export default function Footer() {
                 Open Maps
               </span>
             </div>
-          </a>
+          </motion.a>
 
           <div className="grid grid-cols-2 gap-2 mt-3">
             <div className="bg-[#EEF4FF] rounded-lg px-3 py-2 border border-[#E8EFF8]">
@@ -221,15 +263,21 @@ export default function Footer() {
               </p>
             </div>
           </div>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
 
       {/* ── Bottom copyright bar ── */}
-      <div className="border-t border-gray-100 py-4 text-center ">
+      <motion.div
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true, amount: 0.5 }}
+        transition={{ duration: 0.5 }}
+        className="border-t border-gray-100 py-4 text-center "
+      >
         <p className="text-x text-black/50">
           © Copyright DA Cars 2026. All rights reserved.
         </p>
-      </div>
+      </motion.div>
     </footer>
   );
 }
