@@ -9,6 +9,7 @@ const NAV_LINKS = [
   { label: "How It Works", to: "/how-it-works" },
   { label: "About Us",     to: "/about" },
   { label: "Contact Us",   to: "/contact" },
+
 ];
 
 function useScrolled(threshold = 20) {
@@ -54,7 +55,8 @@ function Navbar() {
     >
       <div style={{
         maxWidth: 1200, margin: "0 auto", padding: "0 24px",
-        display: "flex", alignItems: "center", height: 68, gap: 0,
+        display: "flex", alignItems: "center", height: 72, gap: 0,
+        overflow: "hidden",
       }}>
 
         {/* Logo */}
@@ -63,8 +65,9 @@ function Navbar() {
             whileHover={{ scale: 1.06, rotate: -2 }}
             transition={{ type: "spring", stiffness: 300 }}
             style={{
-              width: 90, height: 90, borderRadius: 10,
+              width: 62, height: 62, borderRadius: 10,
               display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden",
+              flexShrink: 0,
             }}
           >
             <img src={Logo} alt="DA Cars" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
@@ -74,11 +77,8 @@ function Navbar() {
 
           </div>
         </Link>
-
-        <div style={{ flex: 1 }} />
-
-        {/* Nav Links (desktop) */}
-        <div className="hidden-mobile" style={{ display: "flex", alignItems: "center", gap: 4, marginRight: 24, paddingTop: 6 }}>
+{/* Nav Links (desktop) */}
+<div className="hidden-mobile" style={{ display: "flex", alignItems: "center", gap: 20, marginLeft: 40, paddingTop: 6 }}>
           {NAV_LINKS.map((link) => {
             const isActive = location.pathname === link.to;
             return (
@@ -112,9 +112,10 @@ function Navbar() {
             Admin
           </motion.button>
         </div>
+<div style={{ flex: 1 }} />
 
-        {/* Right: Phone + Book Now (desktop) */}
-        <div className="hidden-mobile" style={{ display: "flex", alignItems: "center", gap: 20, flexShrink: 0 }}>
+{/* Right: Phone + Book Now (desktop) */}
+<div className="hidden-mobile" style={{ display: "flex", alignItems: "center", gap: 20, flexShrink: 0, marginRight: 0 }}>
           <motion.a
             whileHover={{ scale: 1.03 }}
             transition={{ type: "spring", stiffness: 400, damping: 20 }}
@@ -146,7 +147,7 @@ function Navbar() {
           </motion.div>
         </div>
 
-        {/* Hamburger (mobile only) */}
+        
         <button
           className="show-mobile"
           onClick={() => setMenuOpen(o => !o)}

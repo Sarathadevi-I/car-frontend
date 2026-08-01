@@ -1,24 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Settings2, Fuel, Wind, MapPin, CarFront, Wallet } from "lucide-react";
 import { Link } from "react-router-dom";
-import Brezza from "../../assets/brezza.jpeg";
-import swift from "../../assets/swift.jpeg";
-import grandI10 from "../../assets/grand.jpeg";
-import etiosLiva from "../../assets/etiosLiva.jpeg";
-import baleno from "../../assets/baleno.jpeg";
-import etios from "../../assets/etios.jpeg";
-import tataZest3 from "../../assets/tataZest3.jpeg";
+// NOTE: this file now shows full car details on Homepage fleet cards too (price, trans, fuel, ac)
 
-const CARS = [
-  { name: "Maruti Suzuki Vitara Brezza", type: "SUV", price: 1699, trans: "Automatic", fuel: "Petrol", ac: "Air Conditioner", img: Brezza },
-  { name: "Maruti Suzuki Swift", type: "Hatchback", price: 1500, trans: "Manual", fuel: "Petrol", ac: "Air Conditioner", img: swift },
-  { name: "Hyundai Grand i10 Nios", type: "Hatchback", price: 1300, trans: "Manual", fuel: "Petrol", ac: "Air Conditioner", img: grandI10 },
-  { name: "Toyota Etios Liva", type: "Hatchback", price: 1300, trans: "Manual", fuel: "Petrol", ac: "Air Conditioner", img: etiosLiva },
-  { name: "Maruti Suzuki Baleno", type: "Hatchback", price: 1800, trans: "Manual", fuel: "Petrol", ac: "Air Conditioner", img: baleno },
-  { name: "Toyota Etios", type: "Sedan", price: 1500, trans: "Manual", fuel: "Petrol", ac: "Air Conditioner", img: etios },
-  { name: "Tata Zest", type: "Sedan", price: 1500, trans: "Manual", fuel: "Petrol", ac: "Air Conditioner", img: tataZest3 },
-];
+const API_BASE = import.meta.env.VITE_API_URL;
 
 // ── Reusable scroll-reveal wrapper (replaces old FadeIn) ──
 const fadeUp = {
@@ -59,6 +45,25 @@ function Homepage() {
   const [errors, setErrors] = useState({});
   const [message, setMessage] = useState(null);
 
+  // ── Dynamic fleet, fetched from admin-managed vehicles ──
+  const [cars, setCars] = useState([]);
+  const [carsLoading, setCarsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCars = async () => {
+      try {
+        const res = await fetch(`${API_BASE}/api/vehicles`);
+        const data = await res.json();
+        setCars(data.slice(0, 6)); // show up to 6 on homepage
+      } catch {
+        setCars([]);
+      } finally {
+        setCarsLoading(false);
+      }
+    };
+    fetchCars();
+  }, []);
+
   const set = (k) => (e) => {
     setForm((p) => ({ ...p, [k]: e.target.value }));
     setErrors((p) => ({ ...p, [k]: false }));
@@ -74,7 +79,7 @@ function Homepage() {
     if (Object.keys(newErrors).length > 0) return;
 
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/bookings`, {
+      const res = await fetch(`${API_BASE}/api/bookings`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -147,7 +152,7 @@ function Homepage() {
                 initial="hidden"
                 animate="show"
               >
-                {[["500+", "Happy clients"], ["80+", "Cars available"], ["4.9★", "Rating"], ["2", "Branches in Pondy"]].map(
+                {[["500+", "Happy clients"], ["80+", "Cars available"], ["5★", "Rating"], ["2", "Branches in Pondy"]].map(
                   ([val, lbl]) => (
                     <motion.div key={lbl} variants={fadeUp}>
                       <p className="text-[22px] font-extrabold text-[#0C2340] m-0">{val}</p>
@@ -432,7 +437,7 @@ function Homepage() {
         </div>
       </section>
 
-      {/* ─── FLEET SECTION ─── */}
+      {/* ─── FLEET SECTION (dynamic, from admin) ─── */}
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-6">
           <Reveal className="flex items-center justify-between mb-10">
@@ -445,49 +450,55 @@ function Homepage() {
             </Link>
           </Reveal>
 
-          <motion.div
-            className="grid md:grid-cols-2 xl:grid-cols-3 gap-6"
-            variants={staggerParent}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, amount: 0.1 }}
-          >
-            {CARS.map((car, i) => (
-              <motion.div
-                key={i}
-                variants={fadeUp}
-                whileHover={{ y: -6, boxShadow: "0 20px 40px rgba(12,35,64,0.14)" }}
-                transition={{ type: "spring", stiffness: 260, damping: 22 }}
-                className="bg-white rounded-2xl overflow-hidden border border-slate-100 shadow-sm flex flex-col"
-              >
-                <div className="overflow-hidden bg-slate-100" style={{ height: 300 }}>
-                  <motion.img
-                    src={car.img}
-                    alt={car.name}
-                    whileHover={{ scale: 1.08 }}
-                    transition={{ duration: 0.5, ease: "easeOut" }}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-
-                <div className="p-5 flex flex-col gap-4 flex-1 justify-between">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h3 className="text-[15px] font-bold text-[#0C2340] leading-snug">{car.name}</h3>
-                      <p className="text-xs text-slate-400 mt-0.5">{car.type}</p>
-                    </div>
+          {carsLoading ? (
+            <p className="text-center text-slate-400 text-sm py-16">Loading vehicles...</p>
+          ) : cars.length === 0 ? (
+            <p className="text-center text-slate-400 text-sm py-16">No vehicles available right now. Please check back soon.</p>
+          ) : (
+            <motion.div
+              className="grid md:grid-cols-2 xl:grid-cols-3 gap-6"
+              variants={staggerParent}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, amount: 0.1 }}
+            >
+              {cars.map((car) => (
+                <motion.div
+                  key={car._id}
+                  variants={fadeUp}
+                  whileHover={{ y: -6, boxShadow: "0 20px 40px rgba(12,35,64,0.14)" }}
+                  transition={{ type: "spring", stiffness: 260, damping: 22 }}
+                  className="bg-white rounded-2xl overflow-hidden border border-slate-100 shadow-sm flex flex-col"
+                >
+                  <div className="overflow-hidden bg-slate-100" style={{ height: 300 }}>
+                    <motion.img
+                      src={car.images?.[0] ? `${API_BASE}${car.images[0]}` : "https://placehold.co/600x400?text=No+Image"}
+                      alt={car.name}
+                      whileHover={{ scale: 1.08 }}
+                      transition={{ duration: 0.5, ease: "easeOut" }}
+                      className="w-full h-full object-cover"
+                    />
                   </div>
 
-                  <Link
-                    to="/vehicles"
-                    className="w-full block text-center bg-[#4B3FD4] hover:bg-[#3b30b8] text-white text-sm font-semibold py-2.5 rounded-xl transition-colors"
-                  >
-                    View Details
-                  </Link>
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
+                  <div className="p-5 flex flex-col gap-4 flex-1 justify-between">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h3 className="text-[15px] font-bold text-[#0C2340] leading-snug">{car.name}</h3>
+                        <p className="text-xs text-slate-400 mt-0.5">{car.type}</p>
+                      </div>
+                    </div>
+
+                    <Link
+                      to="/vehicles"
+                      className="w-full block text-center bg-[#4B3FD4] hover:bg-[#3b30b8] text-white text-sm font-semibold py-2.5 rounded-xl transition-colors"
+                    >
+                      View Details
+                    </Link>
+                  </div>
+                </motion.div>
+              ))}
+            </motion.div>
+          )}
         </div>
       </section>
     </>

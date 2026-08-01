@@ -9,10 +9,13 @@ import ContactUs from './Components/Pages/Contactus';
 import AdminLogin from './Components/Pages/AdminLogin';
 import AdminDashboard from './Components/Pages/Admindashboard';
 import VehicleGroupSelect from './Components/Pages/Vehiclegroupselect';
+import AdminVehicles from './Components/Pages/AdminVehicles';
+
+// ...inside your <Routes>
 
 function Layout() {
   const location = useLocation();
-  const hideNavFooter = location.pathname === "/admin/dashboard";
+  const hideNavFooter = location.pathname === "/admin/dashboard" || location.pathname === "/admin/vehicles";
 
   return (
     <>
@@ -24,8 +27,10 @@ function Layout() {
         <Route path="/about"        element={<AboutUs />} />
         <Route path="/how-it-works" element={<HowItWorks />} />
         <Route path="/contact"      element={<ContactUs />} />
+   
         <Route path="/admin/login"     element={<AdminLogin />} />
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        <Route path="/admin/vehicles" element={<AdminVehicles />} />
       </Routes>
       {!hideNavFooter && <Footer />}
     </>

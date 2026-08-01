@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import * as XLSX from "xlsx";
+import AdminLayout from "./AdminLayout";
 
 const API = `${import.meta.env.VITE_API_URL}/api/admin`;
 
@@ -122,6 +123,7 @@ const logout = () => {
   };
 
   return (
+    <AdminLayout>
     <div style={{ minHeight: "100vh", background: "#F8FAFC", fontFamily: "'DM Sans', sans-serif" }}>
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap');
         table { border-collapse: collapse; width: 100%; }
@@ -130,21 +132,13 @@ const logout = () => {
         tr:hover td { background: #F8FAFC; }
       `}</style>
 
-      {/* ── Header ── */}
-      <div style={{ background: "#0C2340", padding: "16px 32px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <div style={{ width: 34, height: 34, borderRadius: 8, background: "#1A6FD4", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16 }}>🚗</div>
-          <div>
-            <p style={{ fontFamily: "'Plus Jakarta Sans'", fontWeight: 800, fontSize: 16, color: "#fff", margin: 0 }}>DriveX</p>
-            <p style={{ fontSize: 10, color: "#93C5FD", margin: 0, fontWeight: 600 }}>ADMIN DASHBOARD</p>
-          </div>
-        </div>
-        <button onClick={logout} style={{ background: "#EF4444", color: "#fff", border: "none", borderRadius: 8, padding: "8px 18px", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>
-          Logout
-        </button>
+      {/* ── Page header ── */}
+      <div style={{ padding: "24px 24px 0" }}>
+        <h1 style={{ fontFamily: "'Plus Jakarta Sans'", fontWeight: 800, fontSize: 22, color: "#0C2340", margin: 0 }}>Bookings</h1>
+        <p style={{ fontSize: 13, color: "#94A3B8", margin: "4px 0 0" }}>Manage all customer bookings</p>
       </div>
 
-      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "28px 24px" }}>
+      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "20px 24px" }}>
 
         {/* ── Stats ── */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16, marginBottom: 24 }}>
@@ -315,5 +309,6 @@ const logout = () => {
         </div>
       )}
     </div>
+    </AdminLayout>
   );
 }

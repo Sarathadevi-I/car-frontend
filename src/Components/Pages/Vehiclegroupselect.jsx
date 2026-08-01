@@ -1,44 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Settings2, Fuel, Wind, ChevronLeft, ChevronRight } from "lucide-react";
-import Brezza from "../../assets/brezza.jpeg";
-import Brezza1 from "../../assets/brezza1.jpeg";
-import Brezza2 from "../../assets/brezza2.jpeg";
-import Brezza3 from "../../assets/brezza3.jpeg";
-import swift from "../../assets/swift.jpeg";
-import swift1 from "../../assets/swift1.jpeg";
-import swift2 from "../../assets/swift2.jpeg";
-import swift3 from "../../assets/swift3.jpeg";
-import grandI10 from "../../assets/grand.jpeg";
-import grandI101 from "../../assets/grand1.jpeg";
-import grandI102 from "../../assets/grand2.jpeg";
-import grandI103 from "../../assets/grand3.jpeg";
-import etiosLiva from "../../assets/etiosLiva.jpeg";
-import etiosLiva1 from "../../assets/etiosLiva1.jpeg";
-import etiosLiva2 from "../../assets/etiosLiva2.jpeg";
-import etiosLiva3 from "../../assets/etiosLiva3.jpeg";
-import baleno from "../../assets/baleno.jpeg";
-import baleno1 from "../../assets/baleno1.jpeg";
-import baleno2 from "../../assets/baleno2.jpeg";
-import baleno3 from "../../assets/baleno3.jpeg";
-import etios from "../../assets/etios.jpeg";
-import etios1 from "../../assets/etios1.jpeg";
-import etios2 from "../../assets/etios2.jpeg";
-import etios3 from "../../assets/etios3.jpeg";
 import { Link } from "react-router-dom";
-import tataZest1 from "../../assets/tataZest1.jpeg";
-import tataZest2 from "../../assets/tataZest2.jpeg";
-import tataZest3 from "../../assets/tataZest3.jpeg";
 
-const CARS = [
-  { id: 1, name: "Maruti Suzuki Vitara Brezza", type: "SUV",      price: 1699, trans: "Automatic", fuel: "Petrol", ac: "Air Conditioner", images: [Brezza, Brezza1, Brezza2, Brezza3] },
-  { id: 2, name: "Maruti Suzuki Swift",          type: "Hatchback", price: 1500, trans: "Manual",    fuel: "Petrol", ac: "Air Conditioner", images: [swift, swift1, swift2, swift3] },
-  { id: 3, name: "Hyundai Grand i10 Nios",       type: "Hatchback", price: 1300, trans: "Manual",    fuel: "Petrol", ac: "Air Conditioner", images: [grandI10, grandI101, grandI102, grandI103] },
-  { id: 4, name: "Toyota Etios Liva",            type: "Hatchback", price: 1300, trans: "Manual",    fuel: "Petrol", ac: "Air Conditioner", images: [etiosLiva, etiosLiva1, etiosLiva2, etiosLiva3] },
-  { id: 5, name: "Maruti Suzuki Baleno",         type: "Hatchback", price: 1800, trans: "Manual",    fuel: "Petrol", ac: "Air Conditioner", images: [baleno, baleno1, baleno2, baleno3] },
-  { id: 6, name: "Toyota Etios",                 type: "Sedan",     price: 1500, trans: "Manual",    fuel: "Petrol", ac: "Air Conditioner", images: [etios, etios1, etios2, etios3] },
-  { id: 7, name: "Tata Zest",                    type: "Sedan",     price: 1500, trans: "Manual",    fuel: "Petrol", ac: "Air Conditioner", images: [tataZest1, tataZest2, tataZest3] },
-];
+const API_BASE = import.meta.env.VITE_API_URL;
 
 const TabIcon = ({ type }) => {
   const cls = "w-4 h-4 fill-current";
@@ -64,14 +29,15 @@ const staggerParent = {
 
 function Carousel({ images, name }) {
   const [current, setCurrent] = useState(0);
+  const safeImages = images && images.length > 0 ? images : ["https://placehold.co/600x450?text=No+Image"];
 
   const prev = (e) => {
     e.stopPropagation();
-    setCurrent((p) => (p === 0 ? images.length - 1 : p - 1));
+    setCurrent((p) => (p === 0 ? safeImages.length - 1 : p - 1));
   };
   const next = (e) => {
     e.stopPropagation();
-    setCurrent((p) => (p === images.length - 1 ? 0 : p + 1));
+    setCurrent((p) => (p === safeImages.length - 1 ? 0 : p + 1));
   };
 
   return (
@@ -81,7 +47,7 @@ function Carousel({ images, name }) {
         animate={{ x: `-${current * 100}%` }}
         transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
       >
-        {images.map((img, i) => (
+        {safeImages.map((img, i) => (
           <div key={i} className="min-w-full h-full flex-shrink-0">
             <motion.img
               src={img}
@@ -94,49 +60,54 @@ function Carousel({ images, name }) {
         ))}
       </motion.div>
 
-      <motion.button
-        onClick={prev}
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
-        className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/85 hover:bg-white text-[#0C2340] rounded-full p-1 shadow-md transition-opacity duration-200"
-      >
-        <ChevronLeft size={18} strokeWidth={2.5} />
-      </motion.button>
-
-      <motion.button
-        onClick={next}
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
-        className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/85 hover:bg-white text-[#0C2340] rounded-full p-1 shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-      >
-        <ChevronRight size={18} strokeWidth={2.5} />
-      </motion.button>
-
-      <div className="absolute bottom-2.5 left-1/2 -translate-x-1/2 flex gap-1.5">
-        {images.map((_, i) => (
+      {safeImages.length > 1 && (
+        <>
           <motion.button
-            key={i}
-            onClick={(e) => { e.stopPropagation(); setCurrent(i); }}
-            animate={{
-              width: i === current ? 16 : 6,
-              background: i === current ? "#ffffff" : "rgba(255,255,255,0.45)",
-            }}
-            transition={{ duration: 0.25 }}
-            style={{
-              height: 6,
-              borderRadius: 9999,
-              border: "none",
-              cursor: "pointer",
-              padding: 0,
-            }}
-          />
-        ))}
-      </div>
+            onClick={prev}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/85 hover:bg-white text-[#0C2340] rounded-full p-1 shadow-md transition-opacity duration-200"
+          >
+            <ChevronLeft size={18} strokeWidth={2.5} />
+          </motion.button>
+
+          <motion.button
+            onClick={next}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/85 hover:bg-white text-[#0C2340] rounded-full p-1 shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+          >
+            <ChevronRight size={18} strokeWidth={2.5} />
+          </motion.button>
+
+          <div className="absolute bottom-2.5 left-1/2 -translate-x-1/2 flex gap-1.5">
+            {safeImages.map((_, i) => (
+              <motion.button
+                key={i}
+                onClick={(e) => { e.stopPropagation(); setCurrent(i); }}
+                animate={{
+                  width: i === current ? 16 : 6,
+                  background: i === current ? "#ffffff" : "rgba(255,255,255,0.45)",
+                }}
+                transition={{ duration: 0.25 }}
+                style={{
+                  height: 6,
+                  borderRadius: 9999,
+                  border: "none",
+                  cursor: "pointer",
+                  padding: 0,
+                }}
+              />
+            ))}
+          </div>
+        </>
+      )}
     </div>
   );
 }
 
 function VehicleCard({ car }) {
+  const fullImages = (car.images || []).map((img) => `${API_BASE}${img}`);
   return (
     <motion.div
       layout
@@ -148,7 +119,7 @@ function VehicleCard({ car }) {
       transition={{ type: "spring", stiffness: 260, damping: 22 }}
       className="bg-white rounded-2xl overflow-hidden border border-slate-100 shadow-sm flex flex-col"
     >
-      <Carousel images={car.images} name={car.name} />
+      <Carousel images={fullImages} name={car.name} />
       <div className="p-5 flex flex-col gap-4 flex-1 justify-between">
         <div className="flex justify-between items-start">
           <div>
@@ -180,7 +151,26 @@ function VehicleCard({ car }) {
 
 export default function VehicleGroupSelect() {
   const [active, setActive] = useState("All");
-  const filtered = active === "All" ? CARS : CARS.filter((c) => c.type === active);
+  const [cars, setCars] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCars = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch(`${API_BASE}/api/vehicles`);
+        const data = await res.json();
+        setCars(data);
+      } catch {
+        setCars([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCars();
+  }, []);
+
+  const filtered = active === "All" ? cars : cars.filter((c) => c.type === active);
 
   return (
     <div className="min-h-screen bg-white pt-24 pb-16 px-6">
@@ -234,22 +224,26 @@ export default function VehicleGroupSelect() {
           ))}
         </motion.div>
 
-        <motion.div
-          layout
-          className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6"
-          variants={staggerParent}
-          initial="hidden"
-          animate="show"
-        >
-          <AnimatePresence mode="popLayout">
-            {filtered.map((car) => (
-              <VehicleCard key={car.id} car={car} />
-            ))}
-          </AnimatePresence>
-        </motion.div>
+        {loading ? (
+          <p className="text-center text-slate-400 text-sm py-20">Loading vehicles...</p>
+        ) : (
+          <motion.div
+            layout
+            className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6"
+            variants={staggerParent}
+            initial="hidden"
+            animate="show"
+          >
+            <AnimatePresence mode="popLayout">
+              {filtered.map((car) => (
+                <VehicleCard key={car._id} car={car} />
+              ))}
+            </AnimatePresence>
+          </motion.div>
+        )}
 
         <AnimatePresence>
-          {filtered.length === 0 && (
+          {!loading && filtered.length === 0 && (
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
