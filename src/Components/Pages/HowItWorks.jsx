@@ -160,7 +160,7 @@ export default function HowItWorks() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.4 }}
-        className="pt-24 pb-10 px-6 text-center border-b border-slate-100"
+        className="pt-24 pb-4 md:pb-6 px-6 text-center"
       >
         <p className="text-[13px] text-slate-400">
           Home / <span className="text-[#0C2340] font-medium">How It Works</span>
@@ -168,7 +168,7 @@ export default function HowItWorks() {
       </motion.div>
 
       {/* ── How It Works ── */}
-      <div className="py-20 px-6">
+      <div className="pt-6 pb-10 md:pt-8 md:pb-12 px-6">
         <div className="max-w-[1200px] mx-auto">
 
           <motion.div
@@ -267,7 +267,7 @@ export default function HowItWorks() {
       </div>
 
       {/* ── Reviews Infinite Marquee ── */}
-      <div className="py-16 bg-white">
+      <div className="pt-6 pb-10 md:pt-8 md:pb-12 bg-white">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -342,7 +342,7 @@ export default function HowItWorks() {
       </div>
 
       {/* ── FAQ ── */}
-      <div className="py-24 px-6" style={{ background: "linear-gradient(180deg, #fff 0%, #F5F5FF 100%)" }}>
+      <div className="pt-10 pb-12 md:pt-12 md:pb-16 px-6" style={{ background: "linear-gradient(180deg, #fff 0%, #F5F5FF 100%)" }}>
         <div className="max-w-[860px] mx-auto">
 
           <motion.div

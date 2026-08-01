@@ -108,8 +108,8 @@ function Homepage() {
   return (
     <>
       {/* ─── HERO ─── */}
-      <section className="bg-white min-h-screen flex items-center pt-[68px]">
-        <div className="max-w-[1200px] mx-auto px-6 py-16 w-full">
+      <section className="bg-white flex items-center pt-[68px]">
+        <div className="max-w-[1200px] mx-auto px-6 pt-16 pb-6 md:pb-8 w-full">
           <motion.div
             initial={{ opacity: 0, y: -12 }}
             animate={{ opacity: 1, y: 0 }}
@@ -331,10 +331,10 @@ function Homepage() {
       </section>
 
       {/* ─── WHY CHOOSE US ─── */}
-      <section className="py-16 md:py-20 bg-white">
+      <section className="pt-8 pb-6 md:pt-10 md:pb-8 bg-white">
         <div className="max-w-6xl mx-auto px-6">
           <motion.div
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 lg:gap-16"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 sm:gap-12 lg:gap-16"
             variants={staggerParent}
             initial="hidden"
             whileInView="show"
@@ -362,7 +362,7 @@ function Homepage() {
       </section>
 
       {/* ─── HOW IT WORKS ─── */}
-      <section className="py-10 md:py-14 bg-white">
+      <section className="pt-6 pb-10 md:pt-8 md:pb-14 bg-white">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
             <Reveal variant={fadeLeft} className="relative">
