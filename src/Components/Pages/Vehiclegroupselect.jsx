@@ -259,7 +259,7 @@ export default function VehicleGroupSelect() {
             </AnimatePresence>
           </motion.div>
         )}
-{/* code */}
+
         <AnimatePresence>
           {!loading && filtered.length === 0 && (
             <motion.p
