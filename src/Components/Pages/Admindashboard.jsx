@@ -126,22 +126,37 @@ const logout = () => {
     <AdminLayout>
     <div style={{ minHeight: "100vh", background: "#F8FAFC", fontFamily: "'DM Sans', sans-serif" }}>
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap');
-        table { border-collapse: collapse; width: 100%; }
-        th { background: #F1F5F9; color: #64748B; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; padding: 10px 14px; text-align: left; }
+        table { border-collapse: collapse; width: 100%; min-width: 920px; }
+        th { background: #F1F5F9; color: #64748B; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; padding: 10px 14px; text-align: left; white-space: nowrap; }
         td { padding: 12px 14px; font-size: 13px; color: #334155; border-bottom: 1px solid #F1F5F9; }
         tr:hover td { background: #F8FAFC; }
+
+        .admin-stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+        .admin-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        .admin-page-pad { padding: 24px 24px 0; }
+        .admin-content-pad { max-width: 1200px; margin: 0 auto; padding: 20px 24px; }
+        .admin-filter-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 12px; }
+        .admin-date-row { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; background: #fff; padding: 12px 16px; border-radius: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); flex-wrap: wrap; }
+
+        @media (max-width: 640px) {
+          .admin-stats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+          .admin-page-pad { padding: 18px 16px 0; }
+          .admin-content-pad { padding: 16px; }
+          .admin-filter-row > div { width: 100%; }
+          .admin-filter-row button { flex: 1; }
+        }
       `}</style>
 
       {/* ── Page header ── */}
-      <div style={{ padding: "24px 24px 0" }}>
+      <div className="admin-page-pad">
         <h1 style={{ fontFamily: "'Plus Jakarta Sans'", fontWeight: 800, fontSize: 22, color: "#0C2340", margin: 0 }}>Bookings</h1>
         <p style={{ fontSize: 13, color: "#94A3B8", margin: "4px 0 0" }}>Manage all customer bookings</p>
       </div>
 
-      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "20px 24px" }}>
+      <div className="admin-content-pad">
 
         {/* ── Stats ── */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16, marginBottom: 24 }}>
+        <div className="admin-stats-grid">
           {[
             { label: "Total Bookings", val: bookings.length, color: "#1A6FD4" },
             { label: "Pending",        val: bookings.filter(b => b.status === "pending").length,   color: "#F59E0B" },
@@ -156,8 +171,8 @@ const logout = () => {
         </div>
 
         {/* ── Filter tabs + Date range + Refresh + Excel ── */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12, flexWrap: "wrap", gap: 12 }}>
-          <div style={{ display: "flex", gap: 8 }}>
+        <div className="admin-filter-row">
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
             {[["all", "All"], ["home", "Homepage"], ["contact", "Contact Us"]].map(([val, label]) => (
               <button key={val} onClick={() => setFilter(val)} style={{
                 padding: "7px 16px", borderRadius: 20, border: "none", cursor: "pointer", fontSize: 13, fontWeight: 600,
@@ -169,7 +184,7 @@ const logout = () => {
             ))}
           </div>
 
-          <div style={{ display: "flex", gap: 8 }}>
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
             <button onClick={fetchBookings} style={{ padding: "7px 16px", borderRadius: 20, border: "1.5px solid #E2E8F0", background: "#fff", fontSize: 13, fontWeight: 600, color: "#0C2340", cursor: "pointer" }}>
               ↻ Refresh
             </button>
@@ -180,7 +195,7 @@ const logout = () => {
         </div>
 
         {/* ── Date range filter ── */}
-        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16, background: "#fff", padding: "12px 16px", borderRadius: 12, boxShadow: "0 1px 4px rgba(0,0,0,0.06)" }}>
+        <div className="admin-date-row">
           <span style={{ fontSize: 12, fontWeight: 600, color: "#64748B" }}>Applied on:</span>
           <input type="date" value={fromDate} onChange={e => setFromDate(e.target.value)}
             style={{ padding: "6px 10px", borderRadius: 8, border: "1.5px solid #E2E8F0", fontSize: 13, outline: "none" }} />
@@ -201,69 +216,71 @@ const logout = () => {
           ) : filtered.length === 0 ? (
             <p style={{ textAlign: "center", padding: 40, color: "#94A3B8" }}>No bookings found</p>
           ) : (
-            <table>
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Name</th>
-                  <th>Phone</th>
-                  <th>Car Type</th>
-                  <th>Service</th>
-                  <th>Pickup</th>
-                  <th>Drop</th>
-                  <th>Rental Date</th>
-                  <th>Return Date</th>
-                  <th>Applied On</th>
-                  <th>Source</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.map((b, i) => (
-                  <tr key={b._id}>
-                    <td style={{ color: "#94A3B8", fontSize: 11 }}>{i + 1}</td>
-                    <td style={{ fontWeight: 600, color: "#0C2340" }}>{b.name || "—"}</td>
-                    <td>{b.phone || "—"}</td>
-                    <td>{b.carType || "—"}</td>
-                    <td>{b.serviceType || "—"}</td>
-                    <td>{b.pickupLocation || "—"}</td>
-                    <td>{b.dropLocation || "—"}</td>
-                    <td>{b.rentalDate || "—"}</td>
-                    <td>{b.returnDate || "—"}</td>
-                    <td style={{ whiteSpace: "nowrap", color: "#64748B" }}>{formatDate(b.createdAt)}</td>
-                    <td>
-                      <span style={{ fontSize: 11, fontWeight: 600, padding: "3px 10px", borderRadius: 20,
-                        background: b.source === "home" ? "#EEF4FF" : "#FFF7ED",
-                        color: b.source === "home" ? "#1A6FD4" : "#FF6B2B" }}>
-                        {b.source}
-                      </span>
-                    </td>
-                    <td>
-                      <span style={{ fontSize: 11, fontWeight: 600, padding: "3px 10px", borderRadius: 20,
-                        ...(STATUS_COLORS[b.status] || { bg: "#F1F5F9", color: "#64748B" }),
-                        background: STATUS_COLORS[b.status]?.bg }}>
-                        {b.status}
-                      </span>
-                    </td>
-                    <td>
-                      <div style={{ display: "flex", gap: 6 }}>
-                        <button onClick={() => setEditModal({ ...b })} style={{ padding: "5px 12px", borderRadius: 8, border: "none", background: "#EEF4FF", color: "#1A6FD4", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>Edit</button>
-                        <button onClick={() => setDeleteId(b._id)} style={{ padding: "5px 12px", borderRadius: 8, border: "none", background: "#FEE2E2", color: "#EF4444", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>Delete</button>
-                      </div>
-                    </td>
+            <div className="admin-table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Phone</th>
+                    <th>Car Type</th>
+                    <th>Service</th>
+                    <th>Pickup</th>
+                    <th>Drop</th>
+                    <th>Rental Date</th>
+                    <th>Return Date</th>
+                    <th>Applied On</th>
+                    <th>Source</th>
+                    <th>Status</th>
+                    <th>Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {filtered.map((b, i) => (
+                    <tr key={b._id}>
+                      <td style={{ color: "#94A3B8", fontSize: 11 }}>{i + 1}</td>
+                      <td style={{ fontWeight: 600, color: "#0C2340" }}>{b.name || "—"}</td>
+                      <td>{b.phone || "—"}</td>
+                      <td>{b.carType || "—"}</td>
+                      <td>{b.serviceType || "—"}</td>
+                      <td>{b.pickupLocation || "—"}</td>
+                      <td>{b.dropLocation || "—"}</td>
+                      <td>{b.rentalDate || "—"}</td>
+                      <td>{b.returnDate || "—"}</td>
+                      <td style={{ whiteSpace: "nowrap", color: "#64748B" }}>{formatDate(b.createdAt)}</td>
+                      <td>
+                        <span style={{ fontSize: 11, fontWeight: 600, padding: "3px 10px", borderRadius: 20,
+                          background: b.source === "home" ? "#EEF4FF" : "#FFF7ED",
+                          color: b.source === "home" ? "#1A6FD4" : "#FF6B2B" }}>
+                          {b.source}
+                        </span>
+                      </td>
+                      <td>
+                        <span style={{ fontSize: 11, fontWeight: 600, padding: "3px 10px", borderRadius: 20,
+                          ...(STATUS_COLORS[b.status] || { bg: "#F1F5F9", color: "#64748B" }),
+                          background: STATUS_COLORS[b.status]?.bg }}>
+                          {b.status}
+                        </span>
+                      </td>
+                      <td>
+                        <div style={{ display: "flex", gap: 6 }}>
+                          <button onClick={() => setEditModal({ ...b })} style={{ padding: "5px 12px", borderRadius: 8, border: "none", background: "#EEF4FF", color: "#1A6FD4", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>Edit</button>
+                          <button onClick={() => setDeleteId(b._id)} style={{ padding: "5px 12px", borderRadius: 8, border: "none", background: "#FEE2E2", color: "#EF4444", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>Delete</button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           )}
         </div>
       </div>
 
       {/* ── Edit Modal ── */}
       {editModal && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.4)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 999 }}>
-          <div style={{ background: "#fff", borderRadius: 20, padding: "32px 28px", width: "100%", maxWidth: 480, maxHeight: "90vh", overflowY: "auto" }}>
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.4)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 999, padding: 16 }}>
+          <div style={{ background: "#fff", borderRadius: 20, padding: "32px 28px", width: "100%", maxWidth: 480, maxHeight: "90vh", overflowY: "auto", boxSizing: "border-box" }}>
             <h3 style={{ fontFamily: "'Plus Jakarta Sans'", fontWeight: 800, color: "#0C2340", margin: "0 0 20px" }}>Edit Booking</h3>
             {[
               ["name", "Name"], ["phone", "Phone"], ["carType", "Car Type"],
@@ -296,8 +313,8 @@ const logout = () => {
 
       {/* ── Delete Confirm ── */}
       {deleteId && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.4)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 999 }}>
-          <div style={{ background: "#fff", borderRadius: 20, padding: "32px 28px", width: "100%", maxWidth: 380, textAlign: "center" }}>
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.4)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 999, padding: 16 }}>
+          <div style={{ background: "#fff", borderRadius: 20, padding: "32px 28px", width: "100%", maxWidth: 380, textAlign: "center", boxSizing: "border-box" }}>
             <div style={{ fontSize: 40, marginBottom: 12 }}>🗑️</div>
             <h3 style={{ fontFamily: "'Plus Jakarta Sans'", fontWeight: 800, color: "#0C2340", margin: "0 0 8px" }}>Delete Booking?</h3>
             <p style={{ fontSize: 13, color: "#94A3B8", margin: "0 0 24px" }}>This action cannot be undone.</p>

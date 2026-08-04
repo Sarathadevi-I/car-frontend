@@ -110,10 +110,22 @@ export default function AdminVehicles() {
   return (
     <AdminLayout>
       <div style={{ minHeight: "100vh", background: "#F8FAFC", fontFamily: "'DM Sans', sans-serif" }}>
-        <style>{`@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap');`}</style>
+        <style>{`
+          @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap');
+
+          .av-page-pad { padding: 24px 24px 0; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+          .av-content-pad { max-width: 1200px; margin: 0 auto; padding: 20px 24px; }
+          .av-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 18px; }
+
+          @media (max-width: 640px) {
+            .av-page-pad { padding: 18px 16px 0; }
+            .av-content-pad { padding: 16px; }
+            .av-grid { grid-template-columns: 1fr; }
+          }
+        `}</style>
 
         {/* ── Page header ── */}
-        <div style={{ padding: "24px 24px 0", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <div className="av-page-pad">
           <div>
             <h1 style={{ fontFamily: "'Plus Jakarta Sans'", fontWeight: 800, fontSize: 22, color: "#0C2340", margin: 0 }}>Vehicles</h1>
             <p style={{ fontSize: 13, color: "#94A3B8", margin: "4px 0 0" }}>Manage the fleet shown on the website</p>
@@ -126,13 +138,13 @@ export default function AdminVehicles() {
           </button>
         </div>
 
-        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "20px 24px" }}>
+        <div className="av-content-pad">
           {loading ? (
             <p style={{ textAlign: "center", padding: 40, color: "#94A3B8" }}>Loading vehicles...</p>
           ) : vehicles.length === 0 ? (
             <p style={{ textAlign: "center", padding: 40, color: "#94A3B8" }}>No vehicles added yet. Click "Add Vehicle" to get started.</p>
           ) : (
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: 18 }}>
+            <div className="av-grid">
               {vehicles.map((v) => (
                 <div key={v._id} style={{ background: "#fff", borderRadius: 16, overflow: "hidden", boxShadow: "0 1px 4px rgba(0,0,0,0.06)" }}>
                   <div style={{ height: 160, background: "#F1F5F9", overflow: "hidden" }}>
@@ -163,8 +175,8 @@ export default function AdminVehicles() {
 
         {/* ── Add/Edit Modal ── */}
         {modalOpen && (
-          <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.4)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 999, padding: 20 }}>
-            <div style={{ background: "#fff", borderRadius: 20, padding: "28px 26px", width: "100%", maxWidth: 460, maxHeight: "90vh", overflowY: "auto" }}>
+          <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.4)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 999, padding: 16 }}>
+            <div style={{ background: "#fff", borderRadius: 20, padding: "28px 22px", width: "100%", maxWidth: 460, maxHeight: "90vh", overflowY: "auto", boxSizing: "border-box" }}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
                 <h3 style={{ fontFamily: "'Plus Jakarta Sans'", fontWeight: 800, color: "#0C2340", margin: 0 }}>
                   {editingId ? "Edit Vehicle" : "Add Vehicle"}
@@ -290,8 +302,8 @@ export default function AdminVehicles() {
 
         {/* ── Delete Confirm ── */}
         {deleteId && (
-          <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.4)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 999 }}>
-            <div style={{ background: "#fff", borderRadius: 20, padding: "32px 28px", width: "100%", maxWidth: 380, textAlign: "center" }}>
+          <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.4)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 999, padding: 16 }}>
+            <div style={{ background: "#fff", borderRadius: 20, padding: "32px 28px", width: "100%", maxWidth: 380, textAlign: "center", boxSizing: "border-box" }}>
               <div style={{ fontSize: 40, marginBottom: 12 }}>🗑️</div>
               <h3 style={{ fontFamily: "'Plus Jakarta Sans'", fontWeight: 800, color: "#0C2340", margin: "0 0 8px" }}>Delete Vehicle?</h3>
               <p style={{ fontSize: 13, color: "#94A3B8", margin: "0 0 24px" }}>This will remove it from the website immediately.</p>
