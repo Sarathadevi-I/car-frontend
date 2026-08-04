@@ -50,18 +50,31 @@ function Homepage() {
   const [carsLoading, setCarsLoading] = useState(true);
 
   useEffect(() => {
-    const fetchCars = async () => {
+    let cancelled = false;
+    const fetchCars = async (attempt = 1) => {
       try {
         const res = await fetch(`${API_BASE}/api/vehicles`);
+        if (!res.ok) throw new Error("bad response");
         const data = await res.json();
-        setCars(data.slice(0, 6)); // show up to 6 on homepage
+        if (!cancelled) {
+          setCars(data.slice(0, 6)); // show up to 6 on homepage
+          setCarsLoading(false);
+        }
       } catch {
-        setCars([]);
-      } finally {
-        setCarsLoading(false);
+        // Render free-tier backend can take 50s+ to wake up from sleep —
+        // retry a few times before giving up instead of showing empty state
+        if (attempt < 6 && !cancelled) {
+          setTimeout(() => fetchCars(attempt + 1), 8000);
+        } else if (!cancelled) {
+          setCars([]);
+          setCarsLoading(false);
+        }
       }
     };
     fetchCars();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const set = (k) => (e) => {

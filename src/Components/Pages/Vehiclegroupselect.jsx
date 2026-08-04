@@ -153,21 +153,37 @@ export default function VehicleGroupSelect() {
   const [active, setActive] = useState("All");
   const [cars, setCars] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [wakingUp, setWakingUp] = useState(false);
 
   useEffect(() => {
-    const fetchCars = async () => {
-      setLoading(true);
+    let cancelled = false;
+    const fetchCars = async (attempt = 1) => {
       try {
         const res = await fetch(`${API_BASE}/api/vehicles`);
+        if (!res.ok) throw new Error("bad response");
         const data = await res.json();
-        setCars(data);
+        if (!cancelled) {
+          setCars(data);
+          setLoading(false);
+          setWakingUp(false);
+        }
       } catch {
-        setCars([]);
-      } finally {
-        setLoading(false);
+        // Render free-tier backend can take 50s+ to wake up from sleep —
+        // retry a few times before giving up instead of showing empty state
+        if (attempt < 6 && !cancelled) {
+          setWakingUp(true);
+          setTimeout(() => fetchCars(attempt + 1), 8000);
+        } else if (!cancelled) {
+          setCars([]);
+          setLoading(false);
+          setWakingUp(false);
+        }
       }
     };
     fetchCars();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const filtered = active === "All" ? cars : cars.filter((c) => c.type === active);
@@ -225,7 +241,9 @@ export default function VehicleGroupSelect() {
         </motion.div>
 
         {loading ? (
-          <p className="text-center text-slate-400 text-sm py-20">Loading vehicles...</p>
+          <p className="text-center text-slate-400 text-sm py-20">
+            {wakingUp ? "Waking up server, this can take a moment..." : "Loading vehicles..."}
+          </p>
         ) : (
           <motion.div
             layout
